@@ -4,6 +4,14 @@ AI-assisted builder showcase for Xiaomi MiMo 100T submission.
 
 This repository demonstrates a Telegram-controlled Hermes Agent workflow used for web prototyping, deployment checks, submission packaging, and repeatable builder automation.
 
+## Live GitHub Pages demo
+
+After GitHub Pages is enabled, the static demo is available at:
+
+- https://rizkibkw.github.io/mimo-100t-builder-showcase/store/
+- https://rizkibkw.github.io/mimo-100t-builder-showcase/landpage/
+- https://rizkibkw.github.io/mimo-100t-builder-showcase/sketches/
+
 ## What's inside
 
 - `store/` — static storefront demo for premium landing page templates.
