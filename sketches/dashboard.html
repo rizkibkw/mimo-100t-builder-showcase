@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Wallet Dashboard</title>
+    <script src="https://unpkg.com/@solana/web3.js@1.95.8/dist/index.iife.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .header h1 { font-size: 24px; color: #9945FF; }
+        .header-actions { display: flex; gap: 10px; }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-refresh { background: #1a1a2e; color: #fff; }
+        .btn-refresh:hover { background: #2a2a4e; }
+        .btn-disconnect { background: #FF4444; color: #fff; }
+        .btn-disconnect:hover { background: #FF6666; }
+        .address-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0a0a0f 100%);
+            border: 1px solid #9945FF;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .address-label { font-size: 14px; color: #888; margin-bottom: 10px; }
+        .address-value {
+            font-family: monospace;
+            font-size: 16px;
+            color: #fff;
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+        .copy-btn {
+            background: #9945FF;
+            color: #fff;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .copy-btn:hover { background: #B366FF; }
+        .balance-card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .balance-label { font-size: 14px; color: #888; margin-bottom: 10px; }
+        .balance-value { font-size: 48px; font-weight: bold; color: #fff; }
+        .balance-value span { font-size: 24px; color: #9945FF; }
+        .section-title { font-size: 18px; margin-bottom: 20px; color: #fff; }
+        .tokens-grid { display: grid; gap: 12px; }
+        .token-item {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .token-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2a2a4e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            overflow: hidden;
+        }
+        .token-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .token-info { flex: 1; }
+        .token-name { font-size: 15px; font-weight: 500; color: #fff; }
+        .token-symbol { font-size: 13px; color: #888; }
+        .token-amount { text-align: right; }
+        .token-balance { font-size: 15px; color: #fff; }
+        .token-usd { font-size: 12px; color: #888; }
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .error { text-align: center; padding: 40px; color: #FF4444; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Solana Dashboard</h1>
+            <div class="header-actions">
+                <button class="btn btn-refresh" onclick="refreshData()">Refresh</button>
+                <button class="btn btn-disconnect" onclick="disconnect()">Disconnect</button>
+            </div>
+        </div>
+
+        <div class="address-card">
+            <div class="address-label">Wallet Address</div>
+            <div class="address-value" id="address"></div>
+            <button class="copy-btn" onclick="copyAddress()">Copy Address</button>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-label">SOL Balance</div>
+            <div class="balance-value"><span id="solBalance">--</span> <span>SOL</span></div>
+        </div>
+
+        <h2 class="section-title">SPL Tokens</h2>
+        <div class="tokens-grid" id="tokensContainer">
+            <div class="loading">Loading tokens...</div>
+        </div>
+    </div>
+
+    <script>
+        const SOLANA_RPC = 'https://rpc.ankr.com/solana';
+        const JUPITER_PRICE_API = 'https://api.jup.ag/price';
+        let walletAddress = null;
+
+        function checkWallet() {
+            const stored = localStorage.getItem('walletPublicKey');
+            if (!stored) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return stored;
+        }
+
+        function disconnect() {
+            localStorage.removeItem('walletPublicKey');
+            localStorage.removeItem('walletConnected');
+            window.location.href = 'login.html';
+        }
+
+        function copyAddress() {
+            navigator.clipboard.writeText(walletAddress);
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy Address', 2000);
+        }
+
+        async function getSolBalance(address) {
+            const connection = new solanaWeb3.Connection(SOLANA_RPC);
+            const pubkey = new solanaWeb3.PublicKey(address);
+            return await connection.getBalance(pubkey);
+        }
+
+        async function getSplTokens(address) {
+            const connection = new solanaWeb3.Connection(SOLANA_RPC);
+            const pubkey = new solanaWeb3.PublicKey(address);
+            const tokens = await connection.getTokenAccountsByOwner(pubkey, { programId: new solanaWeb3.PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA') });
+            return tokens.value;
+        }
+
+        async function fetchJupiterMeta(mints) {
+            if (mints.length === 0) return {};
+            try {
+                const ids = mints.join(',');
+                const resp = await fetch(`${JUPITER_PRICE_API}?ids=${ids}`);
+                const data = await resp.json();
+                return data.data || {};
+            } catch {
+                return {};
+            }
+        }
+
+        function getTokenIcon(meta, mint) {
+            if (meta && meta[mint] && meta[mint].logoURI) {
+                return `<img src="${meta[mint].logoURI}" alt="" onerror="this.parentElement.innerHTML='?'">`;
+            }
+            return '?';
+        }
+
+        async function refreshData() {
+            if (!walletAddress) return;
+            document.getElementById('address').textContent = walletAddress;
+
+            try {
+                // Fetch SOL balance
+                const lamports = await getSolBalance(walletAddress);
+                document.getElementById('solBalance').textContent = (lamports / 1e9).toFixed(4);
+
+                // Fetch SPL tokens
+                const tokenAccounts = await getSplTokens(walletAddress);
+                const container = document.getElementById('tokensContainer');
+
+                if (tokenAccounts.length === 0) {
+                    container.innerHTML = '<div class="loading">No SPL tokens found</div>';
+                    return;
+                }
+
+                // Get token data
+                const mints = tokenAccounts.map(acc => acc.account.data.parsed.info.mint);
+                const meta = await fetchJupiterMeta(mints);
+
+                container.innerHTML = tokenAccounts.map(acc => {
+                    const info = acc.account.data.parsed.info;
+                    const mint = info.mint;
+                    const amount = info.tokenAmount;
+                    const decimals = amount.decimals;
+                    const uiAmount = amount.uiAmount || (amount.amount / Math.pow(10, decimals));
+                    const tokenMeta = meta[mint];
+
+                    return `
+                        <div class="token-item">
+                            <div class="token-icon">${getTokenIcon(meta, mint)}</div>
+                            <div class="token-info">
+                                <div class="token-name">${tokenMeta?.name || 'Unknown Token'}</div>
+                                <div class="token-symbol">${tokenMeta?.symbol || '???'}</div>
+                            </div>
+                            <div class="token-amount">
+                                <div class="token-balance">${uiAmount.toLocaleString(undefined, { maximumFractionDigits: 6 })}</div>
+                                ${tokenMeta?.price ? `<div class="token-usd">$${(uiAmount * tokenMeta.price).toFixed(2)}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                document.getElementById('tokensContainer').innerHTML = `<div class="error">Error: ${err.message}</div>`;
+            }
+        }
+
+        // Initialize
+        walletAddress = checkWallet();
+        if (walletAddress) {
+            refreshData();
+        }
+    </script>
+</body>
+</html>

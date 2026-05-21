@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noteflow — The Smarter Way to Capture Ideas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ====== CSS VARIABLES — SUPER EASY TO CUSTOMIZE ====== */
+:root {
+  /* === THEME: Change these 5 lines to completely re-skin === */
+  --primary: #4f46e5;      /* Main brand color */
+  --primary-light: #818cf8;
+  --primary-dark: #3730a3;
+  --accent: #10b981;        /* Secondary / success / CTA contrast */
+  --bg: #ffffff;            /* Page background */
+
+  /* Text colors */
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+
+  /* Surface colors */
+  --surface: #f9fafb;
+  --surface-2: #f3f4f6;
+  --border: #e5e7eb;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --shadow-lg: 0 20px 40px -8px rgba(0,0,0,0.1);
+  --shadow-xl: 0 40px 80px -12px rgba(0,0,0,0.12);
+
+  /* Radii */
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --t: 0.2s ease;
+}
+
+/* ====== RESET ====== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text);
+  -webkit-font-smoothing: antialiased; line-height: 1.6;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ====== LAYOUT ====== */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 100px 0; }
+.section-sm { padding: 60px 0; }
+
+/* ====== BUTTONS ====== */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: var(--radius-full);
+  font-weight: 600; font-size: 15px; border: none;
+  transition: all var(--t); cursor: pointer;
+}
+.btn-primary {
+  background: var(--primary); color: #fff;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+}
+.btn-primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79,70,229,0.45);
+}
+.btn-secondary {
+  background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--surface); }
+.btn-lg { padding: 16px 36px; font-size: 16px; }
+
+/* ====== NAVBAR ====== */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 0; transition: all 0.3s ease;
+  background: rgba(255,255,255,0.9);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+}
+.navbar.scrolled { border-color: var(--border); }
+.navbar-inner {
+  max-width: 1120px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+.nav-logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--primary); display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { font-size: 15px; font-weight: 500; color: var(--text-muted); transition: color var(--t); }
+.nav-links a:hover { color: var(--text); }
+.nav-cta { display: flex; align-items: center; gap: 12px; }
+.nav-cta .btn-secondary { padding: 9px 20px; font-size: 14px; }
+
+/* ====== HERO ====== */
+.hero {
+  padding: 160px 0 100px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-full); padding: 8px 18px;
+  font-size: 13px; font-weight: 500; color: var(--text-muted);
+  margin-bottom: 28px;
+}
+.hero-badge-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 8px var(--accent);
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.hero h1 {
+  font-size: clamp(40px, 6vw, 68px); font-weight: 800;
+  letter-spacing: -2px; line-height: 1.1;
+  margin-bottom: 20px; color: var(--text);
+}
+.hero h1 .highlight {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(16px, 2vw, 19px); color: var(--text-muted);
+  max-width: 580px; margin: 0 auto 40px; line-height: 1.7;
+}
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
+.hero-note {
+  font-size: 13px; color: var(--text-light);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 16px;
+}
+.hero-note svg { width: 14px; height: 14px; fill: var(--accent); }
+
+/* APP MOCKUP */
+.hero-visual {
+  max-width: 860px; margin: 0 auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  position: relative;
+}
+.mockup-bar {
+  background: var(--surface-2); border-bottom: 1px solid var(--border);
+  padding: 12px 16px; display: flex; align-items: center; gap: 6px;
+}
+.mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mockup-dot:nth-child(1) { background: #ef4444; }
+.mockup-dot:nth-child(2) { background: #f59e0b; }
+.mockup-dot:nth-child(3) { background: #22c55e; }
+.mockup-content { padding: 32px; }
+.mockup-sidebar {
+  display: flex; gap: 20px;
+}
+.mockup-nav {
+  width: 180px; flex-shrink: 0;
+  border-right: 1px solid var(--border); padding-right: 20px;
+}
+.mockup-nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: 8px; font-size: 13px;
+  font-weight: 500; color: var(--text-muted); margin-bottom: 4px;
+}
+.mockup-nav-item.active {
+  background: var(--primary); color: #fff;
+}
+.mockup-nav-item svg { width: 16px; height: 16px; fill: currentColor; }
+.mockup-main { flex: 1; }
+.mockup-header { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+.mockup-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.mockup-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px;
+}
+.mockup-card-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.mockup-card-sub { font-size: 11px; color: var(--text-muted); }
+.mockup-card-bar {
+  height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 8px; overflow: hidden;
+}
+.mockup-card-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+}
+
+/* ====== LOGO BAR ====== */
+.logos { padding: 50px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.logos-inner { display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; opacity: 0.5; }
+.logo-item { font-size: 20px; font-weight: 800; color: var(--text-muted); letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+.logo-item svg { width: 24px; height: 24px; }
+
+/* ====== FEATURES ====== */
+.features { background: var(--surface); }
+.section-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--primary); margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 42px); font-weight: 800;
+  letter-spacing: -1px; line-height: 1.15; margin-bottom: 14px;
+  color: var(--text);
+}
+.section-sub {
+  font-size: 17px; color: var(--text-muted); max-width: 520px; line-height: 1.7;
+}
+.section-header { margin-bottom: 60px; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feature-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px;
+  transition: all 0.3s ease;
+}
+.feature-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
+}
+.feature-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 20px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+.feature-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.feature-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+/* ====== HOW IT WORKS ====== */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; position: relative; }
+.steps::before {
+  content: ''; position: absolute; top: 24px; left: 15%; right: 15%; height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  opacity: 0.2;
+}
+.step { text-align: center; }
+.step-num {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--primary); color: #fff; font-weight: 700; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; position: relative; z-index: 1;
+}
+.step-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.step-desc { font-size: 14px; color: var(--text-muted); }
+
+/* ====== TESTIMONIALS ====== */
+.testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.testimonial-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+}
+.testimonial-stars { display: flex; gap: 2px; margin-bottom: 16px; }
+.star { color: #f59e0b; font-size: 16px; }
+.testimonial-text { font-size: 15px; line-height: 1.7; margin-bottom: 20px; color: var(--text); }
+.testimonial-author { display: flex; align-items: center; gap: 12px; }
+.testimonial-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 14px;
+}
+.testimonial-name { font-size: 14px; font-weight: 600; }
+.testimonial-role { font-size: 12px; color: var(--text-muted); }
+
+/* ====== PRICING ====== */
+.pricing { background: var(--surface); }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+.pricing-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 36px;
+  transition: all 0.3s;
+}
+.pricing-card.featured {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.03);
+  position: relative;
+}
+.pricing-badge {
+  position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: var(--primary); color: #fff; font-size: 12px; font-weight: 700;
+  padding: 4px 16px; border-radius: var(--radius-full); letter-spacing: 0.5px;
+}
+.pricing-name { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.pricing-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+.pricing-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 24px; }
+.pricing-amount { font-size: 44px; font-weight: 800; letter-spacing: -2px; color: var(--text); }
+.pricing-period { font-size: 15px; color: var(--text-muted); }
+.pricing-features { list-style: none; margin-bottom: 28px; }
+.pricing-features li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 14px; color: var(--text-muted); margin-bottom: 10px;
+}
+.pricing-features li svg { width: 16px; height: 16px; fill: var(--accent); flex-shrink: 0; }
+.pricing-features li.disabled { opacity: 0.4; }
+.pricing-features li.disabled svg { fill: var(--text-light); }
+.pricing-card .btn { width: 100%; justify-content: center; }
+
+/* ====== FAQ ====== */
+.faq-list { max-width: 680px; margin: 0 auto; }
+.faq-item {
+  border-bottom: 1px solid var(--border); padding: 20px 0;
+}
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 16px; font-weight: 600; cursor: pointer; gap: 16px;
+}
+.faq-q svg { width: 20px; height: 20px; fill: var(--text-muted); transition: transform 0.3s; flex-shrink: 0; }
+.faq-item.open .faq-q svg { transform: rotate(45deg); }
+.faq-a {
+  font-size: 14px; color: var(--text-muted); line-height: 1.7;
+  max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+}
+.faq-item.open .faq-a { max-height: 200px; margin-top: 12px; }
+
+/* ====== CTA ====== */
+.cta-section { text-align: center; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: #fff; }
+.cta-section .section-label { color: rgba(255,255,255,0.7); }
+.cta-section .section-title { color: #fff; }
+.cta-section .section-sub { color: rgba(255,255,255,0.8); }
+.cta-section .btn-primary {
+  background: #fff; color: var(--primary-dark);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.cta-section .btn-primary:hover {
+  background: rgba(255,255,255,0.9); transform: translateY(-2px);
+}
+
+/* ====== FOOTER ====== */
+.footer { border-top: 1px solid var(--border); padding: 60px 0 40px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.footer-brand { }
+.footer-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+.footer-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; max-width: 260px; }
+.footer-col h4 { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 10px; transition: color var(--t); }
+.footer-col a:hover { color: var(--primary); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; font-size: 13px; color: var(--text-light); }
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 900px) {
+  .features-grid, .pricing-grid, .testimonials-grid, .steps { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .mockup-sidebar { flex-direction: column; }
+  .mockup-nav { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 16px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .mockup-cards { grid-template-columns: 1fr; }
+  .pricing-card.featured { transform: none; }
+  .nav-links { display: none; }
+}
+@media (max-width: 480px) {
+  .hero { padding: 120px 0 60px; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .steps::before { display: none; }
+}
+
+/* ====== THEME SWITCHER (BONUS) ====== */
+.theme-switcher {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  display: flex; gap: 8px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: var(--radius-full);
+  padding: 8px; box-shadow: var(--shadow-lg);
+}
+.theme-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent;
+  cursor: pointer; transition: all var(--t);
+}
+.theme-btn.active { border-color: var(--primary); }
+.theme-btn:hover { transform: scale(1.1); }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+      </div>
+      Noteflow
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-secondary">Log in</a>
+      <a href="#" class="btn btn-primary">Start free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Over 12,000 teams already organized
+    </div>
+    <h1>The smarter way to<br><span class="highlight">capture every idea</span></h1>
+    <p class="hero-sub">
+      Noteflow is the all-in-one workspace for notes, tasks, and knowledge. Stop juggling apps. Write once, organize everywhere.
+    </p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg">Get started free</button>
+      <button class="btn btn-secondary btn-lg">See how it works</button>
+    </div>
+    <p class="hero-note">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      No credit card required · Free forever plan available
+    </p>
+
+    <!-- APP MOCKUP -->
+    <div class="hero-visual">
+      <div class="mockup-bar">
+        <div class="mockup-dot"></div>
+        <div class="mockup-dot"></div>
+        <div class="mockup-dot"></div>
+      </div>
+      <div class="mockup-content">
+        <div class="mockup-sidebar">
+          <div class="mockup-nav">
+            <div class="mockup-nav-item active">
+              <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+              Dashboard
+            </div>
+            <div class="mockup-nav-item">
+              <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+              Notes
+            </div>
+            <div class="mockup-nav-item">
+              <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+              Tasks
+            </div>
+          </div>
+          <div class="mockup-main">
+            <div class="mockup-header">Weekly Overview</div>
+            <div class="mockup-cards">
+              <div class="mockup-card">
+                <div class="mockup-card-title">Notes created</div>
+                <div class="mockup-card-sub">This week</div>
+                <div class="mockup-card-bar"><div class="mockup-card-fill" style="width: 75%"></div></div>
+              </div>
+              <div class="mockup-card">
+                <div class="mockup-card-title">Tasks completed</div>
+                <div class="mockup-card-sub">12 of 15</div>
+                <div class="mockup-card-bar"><div class="mockup-card-fill" style="width: 80%"></div></div>
+              </div>
+              <div class="mockup-card">
+                <div class="mockup-card-title">Team shared</div>
+                <div class="mockup-card-sub">8 notes</div>
+                <div class="mockup-card-bar"><div class="mockup-card-fill" style="width: 55%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos">
+  <div class="container">
+    <div class="logos-inner">
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Stripe</div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> Vercel</div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Linear</div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg> Notion</div>
+      <div class="logo-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg> Slack</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section features" id="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything you need,<br>nothing you don't</h2>
+      <p class="section-sub">Noteflow combines notes, tasks, and knowledge bases into one seamless experience. Less app-switching, more flow state.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Lightning Fast</div>
+        <div class="feature-desc">Sub-100ms search across thousands of notes. Find anything instantly with our powerful fuzzy search algorithm.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <div class="feature-title">Bi-directional Links</div>
+        <div class="feature-desc">Connect ideas together. Every note shows related content automatically — no manual tagging required.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <div class="feature-title">Real-time Collaboration</div>
+        <div class="feature-desc">Work together in real-time. Share notes, assign tasks, and keep your team in sync effortlessly.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Cross-platform Sync</div>
+        <div class="feature-desc">Web, iOS, Android, Mac, Windows. Your notes sync instantly across all devices — end to end encrypted.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <div class="feature-title">AI-powered Organization</div>
+        <div class="feature-desc">Let AI automatically categorize, tag, and summarize your notes. Spend time creating, not organizing.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📎</div>
+        <div class="feature-title">200+ Integrations</div>
+        <div class="feature-desc">Connect Noteflow to Slack, Jira, GitHub, Figma, and 200+ other tools. One workspace to rule them all.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">Up and running in minutes</h2>
+      <p class="section-sub" style="margin:0 auto">Three steps to a more organized life. No complex setup, no steep learning curve.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Create your account</div>
+        <div class="step-desc">Sign up with email or SSO. Takes 30 seconds. Free plan has unlimited notes.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Import or start fresh</div>
+        <div class="step-desc">Import from Notion, Evernote, or Google Docs in one click. Or start with a blank canvas.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Invite your team</div>
+        <div class="step-desc">Share workspaces, assign tasks, and watch productivity soar. Collaboration made simple.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background: var(--surface)">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-label">Testimonials</div>
+      <h2 class="section-title">Loved by teams worldwide</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="testimonial-text">"Noteflow replaced four apps for our team. We saved 2 hours per week on just app-switching alone. It's that good."</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SK</div>
+          <div>
+            <div class="testimonial-name">Sarah Kim</div>
+            <div class="testimonial-role">Head of Ops, Acme Corp</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="testimonial-text">"The AI auto-tagging alone is worth it. My notes are organized before I even think about organizing them."</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MR</div>
+          <div>
+            <div class="testimonial-name">Marcus Reyes</div>
+            <div class="testimonial-role">Freelance Designer</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <div class="testimonial-text">"We migrated 3,000+ notes from Notion in under an hour. The import was flawless. Best decision we made this quarter."</div>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">JL</div>
+          <div>
+            <div class="testimonial-name">Jenny Liu</div>
+            <div class="testimonial-role">CTO, Startup Labs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section pricing" id="pricing">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">Simple, transparent pricing</h2>
+      <p class="section-sub" style="margin:0 auto">Start free, upgrade when you're ready. No hidden fees, no surprises.</p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="pricing-card">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-desc">Perfect for personal use</div>
+        <div class="pricing-price">
+          <div class="pricing-amount">$0</div>
+          <div class="pricing-period">/month</div>
+        </div>
+        <ul class="pricing-features">
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Up to 100 notes</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 1 device sync</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Basic search</li>
+          <li class="disabled"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> AI features</li>
+          <li class="disabled"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Team collaboration</li>
+        </ul>
+        <button class="btn btn-secondary">Get started</button>
+      </div>
+      <!-- Pro -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-name">Pro</div>
+        <div class="pricing-desc">For power users and creators</div>
+        <div class="pricing-price">
+          <div class="pricing-amount">$12</div>
+          <div class="pricing-period">/month</div>
+        </div>
+        <ul class="pricing-features">
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited notes</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited devices</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Advanced fuzzy search</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> AI auto-tagging</li>
+          <li class="disabled"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Team collaboration</li>
+        </ul>
+        <button class="btn btn-primary">Start 14-day trial</button>
+      </div>
+      <!-- Team -->
+      <div class="pricing-card">
+        <div class="pricing-name">Team</div>
+        <div class="pricing-desc">For growing teams</div>
+        <div class="pricing-price">
+          <div class="pricing-amount">$25</div>
+          <div class="pricing-period">/user/month</div>
+        </div>
+        <ul class="pricing-features">
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Everything in Pro</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Unlimited shared workspaces</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Admin controls</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Priority support</li>
+          <li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> SSO & advanced security</li>
+        </ul>
+        <button class="btn btn-secondary">Contact sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-header" style="text-align:center">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can I migrate from Notion or Evernote?
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+        <div class="faq-a">Yes! We have one-click importers for Notion, Evernote, Google Docs, Confluence, and more. Your notes, formatting, links, and attachments all transfer perfectly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Is my data encrypted?
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+        <div class="faq-a">Absolutely. All your data is encrypted end-to-end. That means even we can't read your notes. We also offer SOC 2 Type II compliance for enterprise teams.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What's included in the free plan?
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+        <div class="faq-a">The free plan includes up to 100 notes, basic search, and single-device sync. No credit card required and it never expires.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can I cancel anytime?
+          <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+        <div class="faq-a">Yes, cancel with one click from your settings. No cancellation fees. If you cancel, you keep access until the end of your billing period.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <div class="container">
+    <div class="section-label">Get started today</div>
+    <h2 class="section-title">Ready to get organized?</h2>
+    <p class="section-sub">Join 12,000+ teams using Noteflow to stay in sync.<br>Start your free trial — no credit card needed.</p>
+    <button class="btn btn-primary btn-lg" style="margin-top:8px">Start free trial</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="nav-logo-icon" style="width:30px;height:30px;border-radius:8px">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          </div>
+          Noteflow
+        </div>
+        <p class="footer-desc">The all-in-one workspace for notes, tasks, and knowledge. Less app-switching, more flow.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#">Features</a>
+        <a href="#">Pricing</a>
+        <a href="#">Integrations</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Documentation</a>
+        <a href="#">API Reference</a>
+        <a href="#">Blog</a>
+        <a href="#">Community</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Noteflow, Inc. All rights reserved.</span>
+      <span>San Francisco, CA</span>
+    </div>
+  </div>
+</footer>
+
+<!-- BONUS: COLOR THEMES SWITCHER -->
+<div class="theme-switcher" id="themeSwitcher">
+  <button class="theme-btn active" style="background:#4f46e5" onclick="setTheme('#4f46e5','#818cf8','#3730a3','#10b981','#ffffff')" title="Purple"></button>
+  <button class="theme-btn" style="background:#2563eb" onclick="setTheme('#2563eb','#60a5fa','#1d4ed8','#06b6d4','#ffffff')" title="Blue"></button>
+  <button class="theme-btn" style="background:#059669" onclick="setTheme('#059669','#34d399','#047857','#f59e0b','#ffffff')" title="Green"></button>
+  <button class="theme-btn" style="background:#dc2626" onclick="setTheme('#dc2626','#f87171','#991b1b','#fbbf24','#ffffff')" title="Red"></button>
+  <button class="theme-btn" style="background:#7c3aed" onclick="setTheme('#7c3aed','#a78bfa','#5b21b6','#f472b6','#ffffff')" title="Violet"></button>
+</div>
+
+<script>
+// FAQ accordion
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+// Theme switcher
+function setTheme(primary, primaryLight, primaryDark, accent, bg) {
+  const r = document.documentElement;
+  r.style.setProperty('--primary', primary);
+  r.style.setProperty('--primary-light', primaryLight);
+  r.style.setProperty('--primary-dark', primaryDark);
+  r.style.setProperty('--accent', accent);
+  r.style.setProperty('--bg', bg);
+
+  // Update theme switcher buttons
+  document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

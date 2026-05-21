@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codefine - AI-Powered Code Reviews</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #09090b;
+      --surface: #18181b;
+      --surface2: #27272a;
+      --border: rgba(255,255,255,0.08);
+      --text: #fafafa;
+      --text2: #a1a1aa;
+      --text3: #52525b;
+      --primary: #8b5cf6;
+      --primary-h: #a78bfa;
+      --accent: #34d399;
+      --accent2: #f59e0b;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+
+    /* Custom Cursor */
+    .cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease, background 0.15s ease;
+      transform: translate(-50%, -50%);
+    }
+    .cursor.hover { transform: translate(-50%, -50%) scale(1.5); background: rgba(139, 92, 246, 0.2); }
+    @media (max-width: 768px) { .cursor { display: none; } }
+
+    /* Reveal Animation */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 16px 0;
+      transition: all 0.3s ease;
+    }
+    .navbar.scrolled {
+      background: rgba(9, 9, 11, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+    .logo svg { width: 32px; height: 32px; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text2);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-ghost {
+      padding: 10px 20px;
+      background: transparent;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { background: var(--surface2); }
+    .btn-primary {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--primary-h); }
+    .mobile-toggle { display: none; background: none; color: var(--text); }
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .mobile-toggle { display: block; font-size: 1.5rem; }
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.3), transparent),
+        repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(255,255,255,0.02) 50px, rgba(255,255,255,0.02) 51px),
+        repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(255,255,255,0.02) 50px, rgba(255,255,255,0.02) 51px);
+    }
+    .hero .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -0.03em;
+    }
+    .gradient {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text2);
+      margin-bottom: 32px;
+      max-width: 500px;
+    }
+    .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-secondary {
+      padding: 12px 24px;
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: var(--surface2); }
+    .hero-visual { position: relative; }
+    .dashboard-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .dash-title { font-weight: 600; font-size: 0.95rem; }
+    .status-badge {
+      padding: 4px 12px;
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 100px;
+    }
+    .code-diff {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+    }
+    .diff-line { display: flex; gap: 16px; }
+    .line-num { color: var(--text3); user-select: none; min-width: 24px; }
+    .line-add { color: var(--accent); }
+    .line-remove { color: #ef4444; }
+    .line-content { color: var(--text); }
+    .comment-bubble {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--surface2);
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+    }
+    .comment-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+    .comment-text { font-size: 0.85rem; color: var(--text2); }
+    @media (max-width: 900px) {
+      .hero .container { grid-template-columns: 1fr; text-align: center; }
+      .hero h1 { font-size: 2.5rem; }
+      .hero-sub { margin: 0 auto 32px; }
+      .hero-btns { justify-content: center; }
+      .hero-visual { margin-top: 40px; }
+    }
+
+    /* ========== LOGO BAR ========== */
+    .logo-bar {
+      padding: 60px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .logo-bar p { text-align: center; color: var(--text3); font-size: 0.85rem; margin-bottom: 32px; }
+    .marquee { display: flex; gap: 60px; animation: marquee 30s linear infinite; }
+    .marquee:hover { animation-play-state: paused; }
+    .logo-item {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text3);
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    .logo-item:hover { color: var(--text2); }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ========== PROBLEM/SOLUTION ========== */
+    .problem-solution { padding: 100px 0; background: var(--surface); }
+    .ps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+    .ps-section h2 { font-size: 2rem; font-weight: 700; margin-bottom: 32px; }
+    .pain-point {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .pain-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #ef4444;
+    }
+    .pain-text { font-size: 0.95rem; color: var(--text2); }
+    .solution-content h2 { color: var(--accent); }
+    .solution-text { font-size: 1rem; color: var(--text2); margin-bottom: 24px; }
+    .solution-img {
+      background: linear-gradient(135deg, var(--surface2), var(--bg));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text3);
+      font-size: 0.9rem;
+    }
+    @media (max-width: 768px) { .ps-grid { grid-template-columns: 1fr; } }
+
+    /* ========== FEATURES ========== */
+    .features { padding: 100px 0; }
+    .section-header { text-align: center; margin-bottom: 60px; }
+    .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; }
+    .section-header p { color: var(--text2); font-size: 1.1rem; }
+    .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 48px; }
+    .tab-btn {
+      padding: 12px 28px;
+      background: transparent;
+      color: var(--text2);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn.active { background: var(--surface); color: var(--text); border-color: var(--border); }
+    .tab-btn:hover:not(.active) { color: var(--text); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .tab-content .tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--primary-h);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+    .tab-content h3 { font-size: 1.75rem; font-weight: 700; margin-bottom: 16px; }
+    .tab-content > p { color: var(--text2); margin-bottom: 24px; }
+    .feature-list { list-style: none; margin-bottom: 32px; }
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      color: var(--text2);
+      font-size: 0.95rem;
+    }
+    .feature-list svg { color: var(--accent); flex-shrink: 0; }
+    .tab-visual {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+    .mock-header {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .mock-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .mock-content { flex: 1; }
+    @media (max-width: 900px) { .tab-panel.active { grid-template-columns: 1fr; } }
+
+    /* ========== STATS ========== */
+    .stats { padding: 80px 0; background: var(--surface); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 32px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+    .stat-label { color: var(--text2); font-size: 0.95rem; }
+    @media (max-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ========== HOW IT WORKS ========== */
+    .how-it-works { padding: 100px 0; }
+    .steps { display: flex; justify-content: space-between; position: relative; }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: var(--border);
+    }
+    .step {
+      text-align: center;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+    .step-num {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0 auto 24px;
+    }
+    .step h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+    .step p { color: var(--text2); font-size: 0.9rem; max-width: 250px; margin: 0 auto; }
+    @media (max-width: 768px) { .steps { flex-direction: column; gap: 40px; } .steps::before { display: none; } }
+
+    /* ========== TESTIMONIALS ========== */
+    .testimonials { padding: 100px 0; background: var(--surface); overflow: hidden; }
+    .carousel { position: relative; max-width: 1000px; margin: 0 auto; }
+    .carousel-track { display: flex; transition: transform 0.5s ease; }
+    .testimonial-card {
+      min-width: 100%;
+      padding: 0 20px;
+    }
+    .testimonial-inner {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+    }
+    .testimonial-quote {
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--text);
+      margin-bottom: 32px;
+      line-height: 1.7;
+    }
+    .testimonial-author { display: flex; align-items: center; justify-content: center; gap: 16px; }
+    .author-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .author-info { text-align: left; }
+    .author-name { font-weight: 600; margin-bottom: 4px; }
+    .author-role { color: var(--text2); font-size: 0.85rem; }
+    .carousel-nav { display: flex; justify-content: center; gap: 16px; margin-top: 32px; }
+    .carousel-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--surface2);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .carousel-btn:hover { background: var(--primary); }
+
+    /* ========== PRICING ========== */
+    .pricing { padding: 100px 0; }
+    .pricing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .toggle-label { color: var(--text2); font-weight: 500; }
+    .toggle-label.active { color: var(--text); }
+    .toggle-switch {
+      width: 56px;
+      height: 28px;
+      background: var(--surface2);
+      border-radius: 100px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-switch.active { background: var(--primary); }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+    .toggle-switch.active::after { transform: translateX(28px); }
+    .save-badge {
+      padding: 4px 10px;
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 100px;
+    }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .pricing-card:hover { transform: translateY(-4px); }
+    .pricing-card.popular { border-color: var(--primary); }
+    .popular-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 16px;
+      background: var(--primary);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 100px;
+    }
+    .pricing-card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; }
+    .pricing-card .price { font-size: 3rem; font-weight: 800; margin-bottom: 8px; }
+    .pricing-card .price span { font-size: 1rem; font-weight: 500; color: var(--text2); }
+    .pricing-card .desc { color: var(--text2); font-size: 0.9rem; margin-bottom: 24px; }
+    .pricing-features { list-style: none; margin-bottom: 32px; }
+    .pricing-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      color: var(--text2);
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .pricing-features li:last-child { border-bottom: none; }
+    .pricing-features svg { color: var(--accent); }
+    .pricing-features .dash { color: var(--text3); }
+    .btn-full { width: 100%; padding: 14px; border-radius: 10px; font-weight: 600; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: var(--surface2); }
+    @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; } }
+
+    /* ========== COMPARISON ========== */
+    .comparison { padding: 100px 0; background: var(--surface); }
+    .comparison-table { width: 100%; border-collapse: collapse; }
+    .comparison-table th, .comparison-table td {
+      padding: 16px 20px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .comparison-table th { background: var(--bg); font-weight: 600; color: var(--text2); font-size: 0.9rem; }
+    .comparison-table th:first-child { text-align: left; }
+    .comparison-table td { font-size: 0.9rem; color: var(--text2); }
+    .comparison-table td:first-child { text-align: left; font-weight: 500; color: var(--text); }
+    .check { color: var(--accent); font-size: 1.2rem; }
+    .dash { color: var(--text3); }
+    .comparison-table tr:hover td { background: var(--surface2); }
+
+    /* ========== FAQ ========== */
+    .faq { padding: 100px 0; }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-question {
+      width: 100%;
+      padding: 24px 0;
+      background: none;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-question svg { transition: transform 0.3s; }
+    .faq-item.active .faq-question svg { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-answer-inner { padding-bottom: 24px; color: var(--text2); line-height: 1.7; }
+    .faq-item.active .faq-answer { max-height: 300px; }
+
+    /* ========== CTA ========== */
+    .cta-section {
+      padding: 100px 0;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(52, 211, 153, 0.1));
+      text-align: center;
+    }
+    .cta-section h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; }
+    .cta-section p { color: var(--text2); font-size: 1.1rem; margin-bottom: 40px; }
+    .cta-form {
+      display: flex;
+      gap: 12px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .cta-form input {
+      flex: 1;
+      padding: 14px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+    }
+    .cta-form input:focus { border-color: var(--primary); }
+    .cta-form button { padding: 14px 28px; white-space: nowrap; }
+    @media (max-width: 600px) { .cta-form { flex-direction: column; } }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      padding: 60px 0 40px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand .logo { margin-bottom: 16px; }
+    .footer-brand p { color: var(--text2); font-size: 0.9rem; max-width: 280px; }
+    .footer-col h4 { font-size: 0.85rem; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px; }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a { color: var(--text2); font-size: 0.9rem; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--text); }
+    .social-row { display: flex; justify-content: space-between; align-items: center; padding-top: 40px; border-top: 1px solid var(--border); }
+    .social-links { display: flex; gap: 16px; }
+    .social-links a {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      transition: all 0.2s;
+    }
+    .social-links a:hover { background: var(--primary); color: white; }
+    .copyright { color: var(--text3); font-size: 0.85rem; }
+    @media (max-width: 900px) { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <!-- Custom Cursor -->
+  <div class="cursor" id="cursor"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="#" class="logo">
+        <svg viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="url(#logo-grad)"/>
+          <path d="M10 12l4 4-4 4M16 20h6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#8b5cf6"/><stop offset="1" stop-color="#34d399"/></linearGradient></defs>
+        </svg>
+        Codefine
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#">Docs</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-ghost">Log in</button>
+        <button class="btn-primary">Start free</button>
+        <button class="mobile-toggle" id="mobile-toggle">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-eyebrow">Backed by a16z · $18M raised</span>
+        <h1>Ship faster with<br><span class="gradient">AI-powered code reviews</span></h1>
+        <p class="hero-sub">Automated PR reviews, security vulnerability detection, and instant feedback for your entire team. Catch bugs before they reach production.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" style="padding: 14px 28px; font-size: 1rem;">Start free for 14 days</button>
+          <button class="btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Watch demo
+          </button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="dashboard-card">
+          <div class="dash-header">
+            <span class="dash-title">Pull Request #847</span>
+            <span class="status-badge">Approved by AI ✓</span>
+          </div>
+          <div class="code-diff">
+            <div class="diff-line"><span class="line-num">12</span><span class="line-content">async function fetchUser(id) {</span></div>
+            <div class="diff-line"><span class="line-num">13</span><span class="line-add">+ const response = await api.get(`/users/${id}`);</span></div>
+            <div class="diff-line"><span class="line-num">14</span><span class="line-remove">- const response = await fetch(`/api/user/${id}`);</span></div>
+            <div class="diff-line"><span class="line-num">15</span><span class="line-add">+ return response.data;</span></div>
+            <div class="diff-line"><span class="line-num">16</span><span class="line-content">}</span></div>
+          </div>
+          <div class="comment-bubble">
+            <span class="comment-avatar">CF</span>
+            <span class="comment-text">Consider adding retry logic for production resilience.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGO BAR -->
+  <section class="logo-bar">
+    <div class="container">
+      <p>Trusted by engineering teams at</p>
+    </div>
+    <div class="marquee-wrapper" style="overflow: hidden;">
+      <div class="marquee">
+        <span class="logo-item">Stripe</span>
+        <span class="logo-item">Vercel</span>
+        <span class="logo-item">Linear</span>
+        <span class="logo-item">GitHub</span>
+        <span class="logo-item">Slack</span>
+        <span class="logo-item">Figma</span>
+        <span class="logo-item">Discord</span>
+        <span class="logo-item">Shopify</span>
+        <span class="logo-item">Stripe</span>
+        <span class="logo-item">Vercel</span>
+        <span class="logo-item">Linear</span>
+        <span class="logo-item">GitHub</span>
+        <span class="logo-item">Slack</span>
+        <span class="logo-item">Figma</span>
+        <span class="logo-item">Discord</span>
+        <span class="logo-item">Shopify</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM/SOLUTION -->
+  <section class="problem-solution">
+    <div class="container">
+      <div class="ps-grid">
+        <div class="ps-section reveal">
+          <h2>The Problem</h2>
+          <div class="pain-point">
+            <div class="pain-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+            <p class="pain-text">Manual reviews take 3+ hours per PR, slowing down iteration velocity</p>
+          </div>
+          <div class="pain-point">
+            <div class="pain-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+            <p class="pain-text">Critical bugs slip into production, causing outages and security incidents</p>
+          </div>
+          <div class="pain-point">
+            <div class="pain-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+            <p class="pain-text">Inconsistent review quality across team members and time zones</p>
+          </div>
+        </div>
+        <div class="ps-section solution-content reveal">
+          <h2>The Solution</h2>
+          <p class="solution-text">Codefine uses machine learning to review every pull request instantly, catch security vulnerabilities, and enforce coding standards automatically—so your team ships faster with confidence.</p>
+          <div class="solution-img">Dashboard Preview</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Everything you need to ship faster</h2>
+        <p>Powerful features to automate and improve your code review process</p>
+      </div>
+      <div class="tabs reveal">
+        <button class="tab-btn active" data-tab="review">AI Review</button>
+        <button class="tab-btn" data-tab="security">Security Scan</button>
+        <button class="tab-btn" data-tab="analytics">Analytics</button>
+      </div>
+      <div class="tab-panel active" id="review">
+        <div class="tab-content">
+          <span class="tag">AI Review</span>
+          <h3>Instant AI-powered code reviews</h3>
+          <p>Our LLM analyzes every line of code, understanding context, intent, and best practices to provide actionable feedback.</p>
+          <ul class="feature-list">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Context-aware code analysis</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Style and convention enforcement</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Performance optimization hints</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Detailed explanation for every suggestion</li>
+          </ul>
+          <button class="btn-primary">Start free trial</button>
+        </div>
+        <div class="tab-visual">
+          <div class="mock-header"><span class="mock-dot" style="background:#ef4444"></span><span class="mock-dot" style="background:#f59e0b"></span><span class="mock-dot" style="background:#22c55e"></span></div>
+          <div class="mock-content">
+            <div style="font-family:monospace;font-size:0.8rem;line-height:1.8;color:var(--text2);">
+              <div><span style="color:var(--primary-h)">// AI Review Analysis</span></div>
+              <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:8px;"><span style="color:var(--accent)">✓</span> No security issues found</div>
+              <div style="margin-top:8px;padding:12px;background:var(--bg);border-radius:8px;"><span style="color:var(--accent2)">!</span> Consider using const instead of let</div>
+              <div style="margin-top:8px;padding:12px;background:var(--bg);border-radius:8px;"><span style="color:var(--accent2)">!</span> Missing error handling for API call</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-panel" id="security">
+        <div class="tab-content">
+          <span class="tag">Security Scan</span>
+          <h3>Automated security vulnerability detection</h3>
+          <p>Catch OWASP Top 10 vulnerabilities, secrets in code, and supply chain risks before they reach production.</p>
+          <ul class="feature-list">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> OWASP Top 10 vulnerability scanning</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Secret detection and alerting</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Dependency vulnerability checks</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Compliance and audit reports</li>
+          </ul>
+          <button class="btn-primary">Start free trial</button>
+        </div>
+        <div class="tab-visual">
+          <div class="mock-header"><span class="mock-dot" style="background:#ef4444"></span><span class="mock-dot" style="background:#f59e0b"></span><span class="mock-dot" style="background:#22c55e"></span></div>
+          <div class="mock-content">
+            <div style="font-family:monospace;font-size:0.8rem;line-height:1.8;color:var(--text2);">
+              <div><span style="color:var(--primary-h)">// Security Scan Results</span></div>
+              <div style="margin-top:16px;padding:12px;background:rgba(239,68,68,0.1);border-radius:8px;border-left:3px solid #ef4444;"><span style="color:#ef4444">CRITICAL</span> SQL injection in query()</div>
+              <div style="margin-top:8px;padding:12px;background:rgba(245,158,11,0.1);border-radius:8px;border-left:3px solid #f59e0b;"><span style="color:#f59e0b">WARNING</span> Hardcoded API key detected</div>
+              <div style="margin-top:8px;padding:12px;background:rgba(52,211,153,0.1);border-radius:8px;"><span style="color:var(--accent)">✓</span> Dependencies up to date</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-panel" id="analytics">
+        <div class="tab-content">
+          <span class="tag">Analytics</span>
+          <h3>Engineering velocity insights</h3>
+          <p>Track PR merge times, review bottlenecks, code quality trends, and team performance metrics over time.</p>
+          <ul class="feature-list">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> PR cycle time dashboards</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Team performance benchmarks</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Code quality trends over time</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Exportable reports for stakeholders</li>
+          </ul>
+          <button class="btn-primary">Start free trial</button>
+        </div>
+        <div class="tab-visual">
+          <div class="mock-header"><span class="mock-dot" style="background:#ef4444"></span><span class="mock-dot" style="background:#f59e0b"></span><span class="mock-dot" style="background:#22c55e"></span></div>
+          <div class="mock-content" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:75%;height:100%;background:var(--accent);border-radius:4px;"></div></div>
+              <span style="font-size:0.75rem;color:var(--text2);">75%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:60%;height:100%;background:var(--primary);border-radius:4px;"></div></div>
+              <span style="font-size:0.75rem;color:var(--text2);">60%</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;"><div style="width:90%;height:100%;background:var(--accent2);border-radius:4px;"></div></div>
+              <span style="font-size:0.75rem;color:var(--text2);">90%</span>
+            </div>
+            <div style="margin-top:16px;font-size:0.8rem;color:var(--text2);">Avg. PR merge time: <span style="color:var(--accent);font-weight:600;">2.4 hours</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <div class="stat-number" data-target="50" data-suffix="M+">0</div>
+          <div class="stat-label">PRs reviewed</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number" data-target="3.2" data-suffix="x">0</div>
+          <div class="stat-label">Faster shipping</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number" data-target="99.9" data-suffix="%" data-decimal="true">0</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number" data-target="2400" data-suffix="+">0</div>
+          <div class="stat-label">Engineering teams</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>How it works</h2>
+        <p>Get started in minutes, not hours</p>
+      </div>
+      <div class="steps reveal">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Connect your repo</h3>
+          <p>Integrate with GitHub, GitLab, or Bitbucket in one click</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>AI reviews every PR</h3>
+          <p>Automatic analysis on every pull request with detailed feedback</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Ship with confidence</h3>
+          <p>Merge faster knowing every issue has been caught</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Loved by developers</h2>
+        <p>See what engineering teams are saying</p>
+      </div>
+      <div class="carousel reveal">
+        <div class="carousel-track" id="carousel-track">
+          <div class="testimonial-card">
+            <div class="testimonial-inner">
+              <p class="testimonial-quote">"Codefine cut our average PR review time from 4 hours to 30 minutes. The AI catches issues we used to miss and the team ships twice as fast."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">SK</div>
+                <div class="author-info"><div class="author-name">Sarah Kim</div><div class="author-role">VP Engineering at Stripe</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-inner">
+              <p class="testimonial-quote">"The security scanning alone is worth it. We caught a critical injection vulnerability the week we onboarded. Codefine pays for itself every sprint."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">MR</div>
+                <div class="author-info"><div class="author-name">Marcus Reynolds</div><div class="author-role">CTO at Linear</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-inner">
+              <p class="testimonial-quote">"Finally, consistent code quality across our team. Junior developers learn faster and senior devs focus on architecture instead of style nits."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">EL</div>
+                <div class="author-info"><div class="author-name">Elena Lopez</div><div class="author-role">Engineering Manager at Shopify</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-inner">
+              <p class="testimonial-quote">"We were skeptical of AI code review, but Codefine understands context. It's not just linting—it actually reasons about our code logic."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">JT</div>
+                <div class="author-info"><div class="author-name">James Torres</div><div class="author-role">Staff Engineer at Vercel</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-inner">
+              <p class="testimonial-quote">"Onboarding new engineers is so much easier now. They get instant feedback and learn our standards without requiring senior review for every line."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">AP</div>
+                <div class="author-info"><div class="author-name">Aisha Patel</div><div class="author-role">Director of Eng at Figma</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="carousel-nav">
+          <button class="carousel-btn" id="prev-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="carousel-btn" id="next-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Simple, transparent pricing</h2>
+        <p>Start free, scale as you grow</p>
+      </div>
+      <div class="pricing-toggle reveal">
+        <span class="toggle-label active" id="monthly-label">Monthly</span>
+        <div class="toggle-switch" id="pricing-toggle"></div>
+        <span class="toggle-label" id="annual-label">Annual</span>
+        <span class="save-badge">Save 33%</span>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card reveal">
+          <h3>Starter</h3>
+          <div class="price" data-monthly="0" data-annual="0">$<span class="price-val">0</span><span>/mo</span></div>
+          <p class="desc">Perfect for side projects and open source</p>
+          <ul class="pricing-features">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> 5 PR reviews/month</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Basic AI suggestions</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> GitHub integration</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Community support</li>
+          </ul>
+          <button class="btn-full btn-outline">Get started</button>
+        </div>
+        <div class="pricing-card popular reveal">
+          <span class="popular-badge">Most Popular</span>
+          <h3>Pro</h3>
+          <div class="price" data-monthly="29" data-annual="19">$<span class="price-val">29</span><span>/mo</span></div>
+          <p class="desc">For growing teams and startups</p>
+          <ul class="pricing-features">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Unlimited PR reviews</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Advanced AI with context</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Security scanning</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Priority support</li>
+          </ul>
+          <button class="btn-full btn-primary">Start free trial</button>
+        </div>
+        <div class="pricing-card reveal">
+          <h3>Team</h3>
+          <div class="price" data-monthly="89" data-annual="59">$<span class="price-val">89</span><span>/mo</span></div>
+          <p class="desc">5 seats included. For scaling organizations</p>
+          <ul class="pricing-features">
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Everything in Pro</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Team analytics</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> SSO & SAML</li>
+            <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Dedicated support</li>
+          </ul>
+          <button class="btn-full btn-outline">Contact sales</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="comparison">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>How we compare</h2>
+        <p>See why teams switch to Codefine</p>
+      </div>
+      <div class="reveal" style="overflow-x:auto;">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Codefine</th>
+              <th>GitHub</th>
+              <th>SonarCloud</th>
+              <th>Codecov</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>AI-powered review</td><td><span class="check">✓</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+            <tr><td>Context-aware suggestions</td><td><span class="check">✓</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td><td><span class="dash">—</span></td></tr>
+            <tr><td>Security vulnerability detection</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="dash">—</span></td></tr>
+            <tr><td>Secret scanning</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+            <tr><td>PR cycle time analytics</td><td><span class="check">✓</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td></tr>
+            <tr><td>Team performance insights</td><td><span class="check">✓</span></td><td><span class="dash">—</span></td><td><span class="dash">—</span></td><td><span class="check">✓</span></td></tr>
+            <tr><td>GitHub + GitLab + Bitbucket</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+            <tr><td>Free tier available</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Frequently asked questions</h2>
+        <p>Everything you need to know about Codefine</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            How does Codefine's AI review work?
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Codefine uses large language models trained on billions of lines of code to analyze your pull requests. It understands code context, identifies potential bugs, security vulnerabilities, performance issues, and provides actionable suggestions with explanations. The AI learns from your codebase over time to provide more relevant feedback.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Which version control systems are supported?
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Codefine integrates with GitHub, GitLab, and Bitbucket. Our GitHub App installs in one click, and we support both cloud and self-hosted versions of these platforms. Enterprise connections for Azure DevOps are coming soon.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Is my code kept private and secure?
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Absolutely. Codefine is SOC 2 Type II certified and GDPR compliant. Your code is processed in isolated environments and never stored permanently. We never use your code to train our models. Enterprise customers can also opt for dedicated infrastructure.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            How long does it take to set up?
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Most teams are up and running in under 5 minutes. Simply install our GitHub App or connect your GitLab/Bitbucket repository, configure your preferences, and you're done. No infrastructure changes, no CI/CD modifications required.</div></div>
+        </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">
+            Can I try Codefine before committing?
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes! We offer a 14-day free trial of the Pro plan with no credit card required. You also get 5 free PR reviews every month forever on our Starter tier. Start today and see the difference AI-powered reviews can make.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="cta-section">
+    <div class="container">
+      <h2 class="reveal">Ready to review PRs 10x faster?</h2>
+      <p class="reveal">Join 2,400+ engineering teams shipping better code, faster</p>
+      <form class="cta-form reveal" onsubmit="return false;">
+        <input type="email" placeholder="Enter your work email">
+        <button class="btn-primary">Get started free</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="8" fill="url(#logo-grad2)"/>
+              <path d="M10 12l4 4-4 4M16 20h6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs><linearGradient id="logo-grad2" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#8b5cf6"/><stop offset="1" stop-color="#34d399"/></linearGradient></defs>
+            </svg>
+            Codefine
+          </a>
+          <p>AI-powered code reviews for modern engineering teams.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Integrations</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">API Reference</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="social-row">
+        <span class="copyright">© 2026 Codefine, Inc. All rights reserved.</span>
+        <div class="social-links">
+          <a href="#" aria-label="Twitter"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+          <a href="#" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="#" aria-label="Discord"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 9a5 5 0 0 0-5-5H6a5 5 0 0 0-5 5v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9z"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Custom Cursor
+    const cursor = document.getElementById('cursor');
+    let mouseX = 0, mouseY = 0, cursorX = 0, cursorY = 0;
+    document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    function animateCursor() { cursorX += (mouseX - cursorX) * 0.15; cursorY += (mouseY - cursorY) * 0.15; cursor.style.left = cursorX + 'px'; cursor.style.top = cursorY + 'px'; requestAnimationFrame(animateCursor); }
+    animateCursor();
+    document.querySelectorAll('button, a, .toggle-switch').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+
+    // Navbar scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => revealObserver.observe(el));
+
+    // Stats counter animation
+    const statNumbers = document.querySelectorAll('.stat-number');
+    const statsObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const target = parseFloat(el.dataset.target);
+          const suffix = el.dataset.suffix || '';
+          const isDecimal = el.dataset.decimal === 'true';
+          const duration = 2000;
+          const start = performance.now();
+          function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = target * eased;
+            el.textContent = (isDecimal ? current.toFixed(1) : Math.floor(current)) + suffix;
+            if (progress < 1) requestAnimationFrame(update);
+          }
+          requestAnimationFrame(update);
+          statsObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    statNumbers.forEach(el => statsObserver.observe(el));
+
+    // Tabs
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabPanels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Carousel
+    const track = document.getElementById('carousel-track');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    let currentSlide = 0;
+    const totalSlides = 5;
+    function goToSlide(index) { currentSlide = ((index % totalSlides) + totalSlides) % totalSlides; track.style.transform = `translateX(-${currentSlide * 100}%)`; }
+    prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+    nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+    let autoSlide = setInterval(() => goToSlide(currentSlide + 1), 5000);
+    document.querySelector('.carousel').addEventListener('mouseenter', () => clearInterval(autoSlide));
+    document.querySelector('.carousel').addEventListener('mouseleave', () => { autoSlide = setInterval(() => goToSlide(currentSlide + 1), 5000); });
+
+    // Pricing toggle
+    const toggle = document.getElementById('pricing-toggle');
+    const monthlyLabel = document.getElementById('monthly-label');
+    const annualLabel = document.getElementById('annual-label');
+    const priceVals = document.querySelectorAll('.price-val');
+    let isAnnual = false;
+    toggle.addEventListener('click', () => {
+      isAnnual = !isAnnual;
+      toggle.classList.toggle('active', isAnnual);
+      monthlyLabel.classList.toggle('active', !isAnnual);
+      annualLabel.classList.toggle('active', isAnnual);
+      document.querySelectorAll('.pricing-card .price').forEach((card, i) => {
+        const prices = [card.dataset.monthly, card.dataset.annual];
+        priceVals[i].textContent = prices[isAnnual ? 1 : 0];
+      });
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!wasActive) item.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

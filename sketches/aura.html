@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURA — AI Music Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#030308;--surface:#0a0a14;--glass:rgba(255,255,255,0.04);
+--border:rgba(255,255,255,0.08);--accent:#a855f7;--accent2:#6366f1;
+--accent3:#ec4899;--text:#e2e8f0;--muted:#64748b;--glow:rgba(168,85,247,0.15);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased}
+canvas#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.canvas-wave{position:fixed;bottom:0;left:0;width:100%;height:200px;z-index:1;
+  pointer-events:none;opacity:0.6}
+.wrap{position:relative;z-index:2}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 0;
+  transition:all .4s ease;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+nav.scrolled{background:rgba(3,3,8,0.8);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;
+  font-size:22px;letter-spacing:-0.5px}
+.logo-icon{width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 30px rgba(168,85,247,0.4);animation:pulse-glow 3s ease-in-out infinite}
+.logo-icon svg{width:18px;height:18px;fill:white}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;
+  transition:color .3s;letter-spacing:0.3px}
+.nav-links a:hover{color:var(--text)}
+.btn-nav{background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff!important;padding:10px 24px;border-radius:100px;
+  font-weight:600!important;font-size:14px!important;
+  box-shadow:0 0 40px rgba(168,85,247,0.3);transition:all .3s}
+.btn-nav:hover{transform:translateY(-2px);box-shadow:0 0 60px rgba(168,85,247,0.5)}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:120px 24px 80px;position:relative}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;
+  background:var(--glass);border:1px solid var(--border);border-radius:100px;
+  padding:8px 20px;font-size:13px;color:var(--muted);margin-bottom:32px;
+  animation:fade-up .8s ease both}
+.hero-badge span{width:8px;height:8px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 12px var(--accent);animation:pulse-glow 2s ease-in-out infinite}
+.hero h1{font-size:clamp(48px,9vw,96px);font-weight:800;line-height:1.05;
+  letter-spacing:-3px;margin-bottom:24px;background:linear-gradient(135deg,#fff 0%,#a78bfa 50%,#818cf8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--muted);
+  max-width:600px;margin:0 auto 48px;line-height:1.7;font-weight:300}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:64px}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;padding:16px 36px;border-radius:100px;font-weight:700;font-size:16px;
+  border:none;cursor:pointer;text-decoration:none;
+  box-shadow:0 0 60px rgba(168,85,247,0.35);
+  transition:all .3s ease;position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  transition:left .5s}
+.btn-primary:hover::before{left:100%}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 0 80px rgba(168,85,247,0.5)}
+.btn-secondary{display:inline-flex;align-items:center;gap:10px;
+  background:var(--glass);border:1px solid var(--border);color:var(--text);
+  padding:16px 36px;border-radius:100px;font-weight:600;font-size:16px;
+  cursor:pointer;text-decoration:none;transition:all .3s}
+.btn-secondary:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15)}
+.hero-visual{position:relative;max-width:900px;margin:0 auto;
+  border-radius:24px;overflow:hidden;border:1px solid var(--border);
+  box-shadow:0 40px 120px rgba(0,0,0,0.5),0 0 80px rgba(168,85,247,0.1)}
+
+/* WAVEFORM VISUAL */
+.waveform-container{background:var(--surface);padding:40px;
+  display:flex;align-items:center;justify-content:center;gap:3px;height:120px}
+.wave-bar{width:4px;background:linear-gradient(to top,var(--accent),var(--accent2),var(--accent3));
+  border-radius:4px;animation:wave-anim var(--speed) ease-in-out infinite;
+  animation-delay:var(--delay);opacity:0.7}
+
+/* STATS */
+.stats-bar{display:flex;justify-content:center;gap:60px;
+  padding:60px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stat{text-align:center}
+.stat-num{font-size:40px;font-weight:800;letter-spacing:-1px;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-label{font-size:13px;color:var(--muted);margin-top:6px;letter-spacing:0.5px}
+
+/* FEATURES */
+.features{padding:120px 0}
+.section-label{font-size:12px;font-weight:700;letter-spacing:3px;
+  text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.section-title{font-size:clamp(32px,5vw,56px);font-weight:800;
+  letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px}
+.section-sub{font-size:18px;color:var(--muted);max-width:560px;
+  line-height:1.7;margin-bottom:64px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feature-card{background:var(--glass);border:1px solid var(--border);
+  border-radius:20px;padding:36px;transition:all .4s ease;
+  position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:0;transition:opacity .4s}
+.feature-card:hover{transform:translateY(-4px);border-color:rgba(168,85,247,0.3);
+  box-shadow:0 20px 60px rgba(0,0,0,0.3),0 0 40px rgba(168,85,247,0.05)}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:24px;font-size:24px;background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(99,102,241,0.15));
+  border:1px solid rgba(168,85,247,0.2)}
+.feature-title{font-size:20px;font-weight:700;margin-bottom:12px;letter-spacing:-0.3px}
+.feature-desc{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* SHOWCASE */
+.showcase{padding:120px 0;display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  align-items:center}
+.showcase-text{ }
+.showcase-visual{position:relative}
+.showcase-card{background:var(--glass);border:1px solid var(--border);
+  border-radius:24px;overflow:hidden;position:relative}
+.showcase-img{width:100%;aspect-ratio:16/10;display:flex;align-items:center;
+  justify-content:center;position:relative;overflow:hidden}
+.showcase-img canvas{width:100%;height:100%}
+.card-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px;
+  background:linear-gradient(to top,rgba(3,3,8,0.9),transparent)}
+.card-tag{display:inline-block;padding:4px 12px;border-radius:100px;
+  font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  margin-bottom:8px}
+.card-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.card-meta{font-size:13px;color:var(--muted)}
+
+/* CTA */
+.cta-section{padding:120px 0;text-align:center;position:relative}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:600px;height:600px;background:radial-gradient(circle,rgba(168,85,247,0.12),transparent 70%);
+  pointer-events:none}
+.cta-title{font-size:clamp(36px,6vw,64px);font-weight:800;letter-spacing:-2px;
+  line-height:1.1;margin-bottom:20px}
+.cta-sub{font-size:18px;color:var(--muted);margin-bottom:48px;max-width:500px;margin-left:auto;margin-right:auto}
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.cta-stat{display:inline-flex;align-items:center;gap:8px;
+  background:var(--glass);border:1px solid var(--border);border-radius:100px;
+  padding:12px 24px;font-size:14px;color:var(--muted);margin:8px}
+.cta-stat strong{color:var(--text)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:60px 0 40px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:60px}
+.footer-brand{ }
+.footer-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;margin-bottom:16px}
+.footer-desc{font-size:14px;color:var(--muted);line-height:1.7;max-width:280px}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:20px}
+.footer-col a{display:block;color:var(--text);text-decoration:none;font-size:14px;
+  margin-bottom:12px;transition:color .3s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:32px;
+  display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+
+/* ANIMATIONS */
+@keyframes fade-up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(168,85,247,0.4)}50%{box-shadow:0 0 40px rgba(168,85,247,0.7)}}
+@keyframes wave-anim{0%,100%{height:8px}50%{height:var(--height)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+
+/* REVEAL ON SCROLL */
+.reveal{opacity:0;transform:translateY(40px);transition:all .8s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* MOBILE */
+@media(max-width:768px){
+.nav-links{display:none}
+.features-grid{grid-template-columns:1fr}
+.showcase{grid-template-columns:1fr;gap:40px}
+.footer-grid{grid-template-columns:1fr 1fr}
+.stats-bar{gap:30px;flex-wrap:wrap}
+.stat-num{font-size:28px}
+.hero{padding:100px 24px 60px}
+}
+
+/* CTA FLOATING */
+.floating-music{position:absolute;animation:float 6s ease-in-out infinite;
+  opacity:0.1;pointer-events:none}
+.floating-music:nth-child(1){top:20%;left:10%;animation-delay:0s}
+.floating-music:nth-child(2){top:60%;right:5%;animation-delay:2s}
+.floating-music:nth-child(3){bottom:20%;left:20%;animation-delay:4s}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="wrap">
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+      </div>
+      AURA
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#showcase">Showcase</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#" class="btn-nav">Get Early Access</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container" style="position:relative">
+    <div class="hero-badge">
+      <span></span>
+      Now in Public Beta — 50,000+ artists creating daily
+    </div>
+    <h1>Music born from<br>your imagination</h1>
+    <p class="hero-sub">
+      AURA transforms your words into studio-quality music — beats, ambient soundscapes, vocals, and full compositions. No instruments. No experience. Just describe what you hear in your head.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="playDemo()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        Listen to Demo
+      </button>
+      <button class="btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        View Gallery
+      </button>
+    </div>
+    <div class="hero-visual">
+      <div class="waveform-container" id="waveformHero">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat reveal">
+    <div class="stat-num" data-target="50000">0</div>
+    <div class="stat-label">Artists Worldwide</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="1200000">0</div>
+    <div class="stat-label">Tracks Generated</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="48">0</div>
+    <div class="stat-label">Genres Covered</div>
+  </div>
+  <div class="stat reveal">
+    <div class="stat-num" data-target="4.9">0</div>
+    <div class="stat-label">Average Rating</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-label reveal">Capabilities</div>
+    <h2 class="section-title reveal">Sound beyond<br>your limits</h2>
+    <p class="section-sub reveal">Every feature designed around one idea: your creativity, amplified by AI.</p>
+    
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎵</div>
+        <div class="feature-title">Text-to-Music</div>
+        <div class="feature-desc">Describe any vibe — "lo-fi beats for a rainy Tokyo morning" — and AURA crafts it in seconds. From jazz to hardstyle, any genre, any mood.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎤</div>
+        <div class="feature-title">AI Vocals</div>
+        <div class="feature-desc">Generate original vocals with any style — from opera soprano to lo-fi vocal chops. Lyrics optional or AI-written. Up to 16 voices per track.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-title">Stem Separation</div>
+        <div class="feature-desc">Upload any track. Extract drums, bass, vocals, and instruments with studio-grade precision. Build remixes on the bones of any song.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎹</div>
+        <div class="feature-title">Style Transfer</div>
+        <div class="feature-desc">Take a melody you hum and transform it into orchestral, synthwave, or jazz. AURA understands the emotion and reinterprets it across genres.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">⏱️</div>
+        <div class="feature-title">Instant Generation</div>
+        <div class="feature-desc">Full 3-minute tracks in under 30 seconds. Not a sketch — a finished, mixed, mastered production ready to publish.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📡</div>
+        <div class="feature-title">Stem Export</div>
+        <div class="feature-desc">WAV, FLAC, MP3, stems — export in any format. Commercial license included. Your music, your rights, your royalties.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE -->
+<section class="showcase" id="showcase">
+  <div class="container" style="display:contents">
+    <div class="showcase-text">
+      <div class="section-label reveal">Live Gallery</div>
+      <h2 class="section-title reveal">Created with<br>AURA today</h2>
+      <p class="section-sub reveal">Real tracks, real artists. Click any card to preview 30 seconds of pure AI-generated audio.</p>
+    </div>
+    <div class="showcase-visual reveal">
+      <div class="showcase-card">
+        <div class="showcase-img">
+          <canvas id="visualizerCanvas"></canvas>
+        </div>
+        <div class="card-overlay">
+          <span class="card-tag">Electronic</span>
+          <div class="card-title">Neon Horizons — Midnight Protocol</div>
+          <div class="card-meta">by studio_null • 3:24 • 12.4K plays</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="container" style="position:relative">
+    <h2 class="cta-title reveal">Your next hit starts<br>with a description</h2>
+    <p class="cta-sub reveal">Join 50,000+ artists, producers, and creators who make music with AURA. Free to start — no credit card required.</p>
+    <div class="cta-buttons reveal">
+      <button class="btn-primary" onclick="playDemo()">
+        Start Creating Free
+      </button>
+    </div>
+    <div class="reveal">
+      <span class="cta-stat"><strong>✓</strong> 10 free tracks/month</span>
+      <span class="cta-stat"><strong>✓</strong> Commercial license</span>
+      <span class="cta-stat"><strong>✓</strong> WAV export</span>
+      <span class="cta-stat"><strong>✓</strong> No signup required</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="logo-icon" style="width:32px;height:32px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+          </div>
+          AURA
+        </div>
+        <p class="footer-desc">AI music intelligence that transforms imagination into sound. Built for creators who refuse to wait.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#">Features</a>
+        <a href="#">Pricing</a>
+        <a href="#">API Access</a>
+        <a href="#">Enterprise</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Documentation</a>
+        <a href="#">Community</a>
+        <a href="#">Blog</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Careers</a>
+        <a href="#">Press Kit</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 AURA AI, Inc. All rights reserved.</span>
+      <span>Pacifica, CA · Seoul · Amsterdam</span>
+    </div>
+  </div>
+</footer>
+
+</div>
+
+<script>
+// ========== PARTICLES ==========
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let mouse = {x: -999, y: -999};
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+class Particle{
+  constructor(){
+    this.reset();
+  }
+  reset(){
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = (Math.random() - 0.5) * 0.3;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.hue = Math.random() * 60 + 260; // purple-blue range
+  }
+  update(){
+    this.x += this.speedX;
+    this.y += this.speedY;
+    // Attract to mouse
+    const dx = mouse.x - this.x;
+    const dy = mouse.y - this.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist < 200){
+      this.x += dx * 0.001;
+      this.y += dy * 0.001;
+    }
+    if(this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height){
+      this.reset();
+    }
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue},80%,70%,${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+const PARTICLE_COUNT = 120;
+for(let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+
+function drawLines(){
+  for(let i = 0; i < particles.length; i++){
+    for(let j = i+1; j < particles.length; j++){
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if(dist < 120){
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(168,85,247,${0.08 * (1 - dist/120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animateParticles(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawLines();
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ========== WAVEFORM HERO ==========
+const waveformHero = document.getElementById('waveformHero');
+const bars = 80;
+for(let i = 0; i < bars; i++){
+  const bar = document.createElement('div');
+  bar.className = 'wave-bar';
+  const h = Math.random() * 60 + 20;
+  bar.style.setProperty('--height', h + 'px');
+  bar.style.setProperty('--speed', (Math.random() * 1.5 + 0.8) + 's');
+  bar.style.setProperty('--delay', (Math.random() * 1) + 's');
+  bar.style.height = '8px';
+  waveformHero.appendChild(bar);
+}
+
+// Animate bars
+setInterval(() => {
+  const barEls = waveformHero.querySelectorAll('.wave-bar');
+  barEls.forEach(bar => {
+    const h = Math.random() * 80 + 10;
+    bar.style.setProperty('--height', h + 'px');
+  });
+}, 600);
+
+// ========== VISUALIZER CANVAS ==========
+const vcanvas = document.getElementById('visualizerCanvas');
+const vctx = vcanvas.getContext('2d');
+
+function resizeVCanvas(){
+  const rect = vcanvas.parentElement.getBoundingClientRect();
+  vcanvas.width = rect.width;
+  vcanvas.height = rect.height;
+}
+resizeVCanvas();
+window.addEventListener('resize', resizeVCanvas);
+
+let visualizerFrame = 0;
+function drawVisualizer(){
+  visualizerFrame++;
+  const w = vcanvas.width;
+  const h = vcanvas.height;
+  vctx.clearRect(0, 0, w, h);
+  
+  // Background gradient
+  const grad = vctx.createLinearGradient(0, 0, w, h);
+  grad.addColorStop(0, '#0a0a14');
+  grad.addColorStop(1, '#030308');
+  vctx.fillStyle = grad;
+  vctx.fillRect(0, 0, w, h);
+  
+  // Animated rings
+  for(let r = 3; r >= 1; r--){
+    const cx = w/2;
+    const cy = h/2;
+    const baseR = Math.min(w,h) * 0.15 * r;
+    const pulseR = baseR + Math.sin(visualizerFrame * 0.03 * r) * 15;
+    
+    vctx.beginPath();
+    vctx.arc(cx, cy, pulseR, 0, Math.PI * 2);
+    const ringGrad = vctx.createLinearGradient(cx-pulseR, cy, cx+pulseR, cy);
+    const hue = 260 + r * 15 + Math.sin(visualizerFrame * 0.01) * 20;
+    ringGrad.addColorStop(0, `hsla(${hue},80%,65%,0.6)`);
+    ringGrad.addColorStop(0.5, `hsla(${hue+30},80%,70%,0.3)`);
+    ringGrad.addColorStop(1, `hsla(${hue},80%,65%,0.6)`);
+    vctx.strokeStyle = ringGrad;
+    vctx.lineWidth = 2;
+    vctx.stroke();
+  }
+  
+  // Center text
+  vctx.fillStyle = 'rgba(255,255,255,0.9)';
+  vctx.font = `bold ${Math.floor(w * 0.06)}px Sora`;
+  vctx.textAlign = 'center';
+  vctx.textBaseline = 'middle';
+  vctx.fillText('▶', w/2, h/2);
+  
+  // Frequency bars
+  const barCount = 32;
+  const barW = w / barCount;
+  for(let i = 0; i < barCount; i++){
+    const freq = Math.sin(i * 0.3 + visualizerFrame * 0.05) * 0.5 + 0.5;
+    const barH = freq * h * 0.25;
+    const hue = 260 + i * 3 + visualizerFrame * 0.2;
+    vctx.fillStyle = `hsla(${hue % 360},80%,65%,0.5)`;
+    vctx.fillRect(i * barW, h - barH - 10, barW - 2, barH);
+  }
+  
+  requestAnimationFrame(drawVisualizer);
+}
+drawVisualizer();
+
+// ========== SCROLL REVEAL ==========
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+revealEls.forEach(el => observer.observe(el));
+
+// ========== COUNTER ANIMATION ==========
+const statNums = document.querySelectorAll('.stat-num[data-target]');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const el = entry.target;
+      const target = parseFloat(el.dataset.target);
+      const isDecimal = target % 1 !== 0;
+      const duration = 2000;
+      const start = performance.now();
+      const animate = (now) => {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString();
+        if(progress < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+statNums.forEach(el => counterObserver.observe(el));
+
+// ========== NAV SCROLL ==========
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('scrolled', window.scrollY > 50);
+}, { passive: true });
+
+// ========== DEMO BUTTON ==========
+function playDemo(){
+  const btn = event.target.closest('.btn-primary');
+  const original = btn.innerHTML;
+  btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg> Playing...';
+  setTimeout(() => {
+    btn.innerHTML = original;
+  }, 2500);
+}
+</script>
+</body>
+</html>

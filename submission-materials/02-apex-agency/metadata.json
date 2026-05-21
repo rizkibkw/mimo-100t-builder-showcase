@@ -1,0 +1,19 @@
+{
+  "title": "Apex Agency - Creative Agency Portfolio Landing Template",
+  "description": "<p><strong>Apex Agency</strong> is a bold, sophisticated landing page template crafted for creative agencies, design studios, marketing firms, and professional service providers. This template makes a powerful statement with its contemporary design and strategic layout that highlights your agency's capabilities and past work.</p><p>Ideal for digital agencies, creative studios, branding agencies, marketing companies, and freelance professionals, Apex Agency provides the perfect digital storefront to attract high-value clients and showcase your portfolio of work.</p>",
+  "tags": ["landing-page", "agency", "portfolio", "creative-agency", "design-studio", "marketing", "professional-services", "bootstrap-5", "responsive", "modern-design", "corporate", "branding", "digital-agency", "creative-portfolio", "business"],
+  "category": "Site Templates > Landing Pages",
+  "subcategory": "Product",
+  "price": 45,
+  "urls": {
+    "preview": "http://43.156.187.236/landpage/02-agency-apex.html"
+  },
+  "compatibility": ["Bootstrap", "Chrome", "Firefox", "Safari", "Edge", "Opera"],
+  "attributes": {
+    "columns": 1,
+    "demo": "Static HTML",
+    "layout": "Responsive",
+    "files_included": ["HTML Files", "CSS Files", "JS Files"],
+    "documentation": "Well documented"
+  }
+}

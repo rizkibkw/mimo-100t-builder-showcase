@@ -1,0 +1,19 @@
+{
+  "title": "Vaultex DeFi - Crypto & Blockchain Landing Page Template",
+  "description": "<p><strong>Vaultex DeFi</strong> is a cutting-edge, crypto-inspired landing page template designed for DeFi projects, blockchain platforms, cryptocurrency exchanges, NFT marketplaces, and web3 startups. Built to convey trust, innovation, and financial freedom, this template speaks the language of the decentralized finance world.</p><p>Perfect for blockchain protocols, DeFi platforms, crypto startups, token sales, NFT collections, and web3 projects, Vaultex DeFi combines sleek modern aesthetics with the technical credibility that crypto investors expect.</p>",
+  "tags": ["landing-page", "defi", "cryptocurrency", "blockchain", "crypto", "nft", "web3", "token", "ethereum", "bitcoin", "bootstrap-5", "responsive", "fintech", "crypto-exchange", "dao", "smart-contracts", "defi-platform", "crypto-launch"],
+  "category": "Site Templates > Landing Pages",
+  "subcategory": "Product",
+  "price": 55,
+  "urls": {
+    "preview": "http://43.156.187.236/landpage/03-crypto-vaultex.html"
+  },
+  "compatibility": ["Bootstrap", "Chrome", "Firefox", "Safari", "Edge", "Opera"],
+  "attributes": {
+    "columns": 1,
+    "demo": "Static HTML",
+    "layout": "Responsive",
+    "files_included": ["HTML Files", "CSS Files", "JS Files"],
+    "documentation": "Well documented"
+  }
+}

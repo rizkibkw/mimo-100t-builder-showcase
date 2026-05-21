@@ -1,0 +1,19 @@
+{
+  "title": "Devport DevTool - Developer Tools Landing Page Template",
+  "description": "<p><strong>Devport DevTool</strong> is a sleek, technical landing page template purpose-built for developer tools, software development kits, APIs, code editors, and technical SaaS products. This template speaks directly to developers with its clean interface, clear documentation sections, and technical credibility that developers demand.</p><p>Ideal for API products, SDK documentation, code editors, developer platforms, programming tools, and technical software, Devport DevTool provides the professional landing page that converts technical decision-makers and developer advocates.</p>",
+  "tags": ["landing-page", "developer-tools", "api", "sdk", "devtools", "software", "programming", "coding", "bootstrap-5", "responsive", "technical", "documentation", "developer-platform", "code-editor", "ide", "saas", "developer-portal", "tech"],
+  "category": "Site Templates > Landing Pages",
+  "subcategory": "Product",
+  "price": 49,
+  "urls": {
+    "preview": "http://43.156.187.236/landpage/04-devtool-devport.html"
+  },
+  "compatibility": ["Bootstrap", "Chrome", "Firefox", "Safari", "Edge", "Opera"],
+  "attributes": {
+    "columns": 1,
+    "demo": "Static HTML",
+    "layout": "Responsive",
+    "files_included": ["HTML Files", "CSS Files", "JS Files"],
+    "documentation": "Well documented"
+  }
+}

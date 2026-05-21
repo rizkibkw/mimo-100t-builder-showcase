@@ -1,0 +1,10 @@
+01-hero-section.png - Hero section with DeFi headline, gradient background, and wallet CTA button
+02-stats-section.png - Statistics section showing TVL, token metrics, and platform numbers
+03-protocol-section.png - Protocol/How It Works section explaining the DeFi mechanism
+04-tokenomics-section.png - Tokenomics section with token distribution and utility information
+05-features-grid.png - Features grid highlighting platform capabilities
+06-roadmap-section.png - Development roadmap with milestones and timeline
+07-security-section.png - Security section displaying audit information and trust measures
+08-partners-section.png - Partners and investors section with VC and exchange logos
+09-faq-section.png - FAQ section for DeFi questions and answers
+10-cta-section.png - Final CTA section with wallet connection prompts

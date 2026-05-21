@@ -1,0 +1,74 @@
+<h2>Product Description</h2>
+
+<p><strong>Apex Agency</strong> is a bold, sophisticated landing page template crafted for creative agencies, design studios, marketing firms, and professional service providers. This template makes a powerful statement with its contemporary design and strategic layout that highlights your agency's capabilities and past work.</p>
+
+<h3>Key Sections</h3>
+
+<ul>
+<li><strong>Hero Section</strong> - Impactful headline and visual that immediately establishes your brand identity</li>
+<li><strong>Work/Portfolio Section</strong> - Showcase your best projects and case studies with visual flair</li>
+<li><strong>Services Section</strong> - Present your service offerings with clear value propositions</li>
+<li><strong>About Section</strong> - Tell your agency's story and build personal connection with prospects</li>
+<li><strong>Process Section</strong> - Walk clients through your workflow and methodology</li>
+<li><strong>Awards & Recognition</strong> - Display achievements and accolades to build credibility</li>
+<li><strong>CTA Section</strong> - Compelling call-to-action to start the conversation</li>
+</ul>
+
+<h3>Template Features</h3>
+
+<ul>
+<li><strong>100% Responsive Design</strong> - Professional presentation on all devices</li>
+<li><strong>Bootstrap 5 Framework</strong> - Latest Bootstrap for modern browser support</li>
+<li><strong>Creative Layout</strong> - Unique section designs that stand out from typical templates</li>
+<li><strong>Portfolio Showcase</strong> - Grid layouts perfect for displaying creative work</li>
+<li><strong>Service Cards</strong> - Beautiful cards to highlight what you offer</li>
+<li><strong>Team/About Areas</strong> - Space to showcase your agency culture and team</li>
+<li><strong>Contact Form Ready</strong> - Prepared sections for lead capture</li>
+<li><strong>Cross-Browser Compatible</strong> - Consistent experience across all browsers</li>
+<li><strong>Easy Customization</strong> - Well-organized code that's easy to modify</li>
+</ul>
+
+<h3>Design Highlights</h3>
+
+<ul>
+<li><strong>Bold Typography</strong> - Strong headline fonts that command attention</li>
+<li><strong>Strategic White Space</strong> - Clean design that lets your work shine</li>
+<li><strong>Color Accents</strong> - Sophisticated color palette for visual interest</li>
+<li><strong>Imagery Focused</strong> - Large visual areas to showcase portfolio pieces</li>
+<li><strong>Professional Tone</strong> - Design that appeals to high-value clients</li>
+</ul>
+
+<h3>Ideal For</h3>
+
+<ul>
+<li>Creative Agencies</li>
+<li>Design Studios</li>
+<li>Marketing Firms</li>
+<li>Branding Agencies</li>
+<li>Digital Agencies</li>
+<li>Advertising Agencies</li>
+<li>Web Design Studios</li>
+<li>Photography Studios</li>
+<li>Video Production</li>
+<li>Freelance Professionals</li>
+</ul>
+
+<h3>Technical Details</h3>
+
+<ul>
+<li>Semantic HTML5 structure</li>
+<li>CSS3 custom styling</li>
+<li>Vanilla JavaScript for interactions</li>
+<li>Google Fonts integration</li>
+<li>Font Awesome icon set</li>
+<li>Smooth scroll effects</li>
+<li>Mobile-responsive navigation</li>
+</ul>
+
+<hr>
+
+<p><strong>Preview:</strong> <a href="http://43.156.187.236/landpage/02-agency-apex.html">http://43.156.187.236/landpage/02-agency-apex.html</a></p>
+
+<p><strong>Price:</strong> $45 - Regular License</p>
+
+<p><strong>Files Included:</strong> HTML, CSS, JS</p>

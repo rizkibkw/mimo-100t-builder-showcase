@@ -1,0 +1,11 @@
+01-homepage-hero-section.png - Hero section showing the main headline "Launch Your SaaS Faster" and prominent CTA button with gradient background
+02-logo-bar-section.png - Logo bar displaying partner/client logos for social proof and credibility
+03-problem-solution-section.png - Problem and Solution section explaining the pain point and how Codefine SaaS Nexus addresses it
+04-features-grid-section.png - Features grid with icons showcasing key product capabilities
+05-stats-metrics-section.png - Statistics section displaying impressive metrics and numbers
+06-how-it-works-section.png - How It Works section with step-by-step process guide
+07-testimonials-section.png - Customer testimonials with quotes and attribution
+08-pricing-table-section.png - Pricing table with multiple tiers and feature comparison
+09-comparison-table-section.png - Side-by-side comparison table with competitors
+10-faq-section.png - FAQ section addressing common questions with accordion design
+11-cta-section.png - Final call-to-action section with compelling headline and button

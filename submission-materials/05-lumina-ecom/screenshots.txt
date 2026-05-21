@@ -1,0 +1,10 @@
+01-hero-section.png - Hero section with product showcase, headline, and buy CTA
+02-features-section.png - Product features grid with icons and benefit descriptions
+03-showcase-section.png - Product showcase gallery with multiple product angles
+04-specs-section.png - Technical specifications table
+05-reviews-section.png - Customer reviews and star ratings display
+06-comparison-section.png - Comparison table with alternatives
+07-whats-in-box-section.png - What's in the box section showing package contents
+08-faq-section.png - FAQ section addressing pre-purchase questions
+09-corporate-support-section.png - Corporate information and support section
+10-cta-section.png - Final purchase CTA with urgency elements

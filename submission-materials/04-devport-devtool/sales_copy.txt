@@ -1,0 +1,162 @@
+================================================================================
+                    DEVPORT DEVTOOL - SALES COPY
+================================================================================
+
+HEADLINE:
+Devport DevTool - The Developer-Focused Landing Page That Speaks Their Language
+
+HOOK:
+Developers are a unique audience. They can spot amateur design from a mile away. 
+They have high standards for code quality. And they make decisions based on 
+credibility, documentation, and technical merit. Your landing page needs to 
+pass the developer test - or they'll move on to the next tool.
+
+PAIN POINT:
+Most landing pages talk "marketing" to an audience that thinks in code. 
+Fluff phrases like "revolutionary synergy" don't work on developers. They want 
+to see: What does it do? How do I use it? What are the technical specs? Does 
+this tool have credibility? Miss these marks, and they won't even give you a 
+trial.
+
+SOLUTION:
+Devport DevTool is a technical landing page template designed specifically for 
+developer tools, APIs, SDKs, and technical SaaS. Every element speaks to 
+developers in their language: clean interfaces, clear documentation, and 
+technical credibility.
+
+FEATURES FOR DEVELOPERS:
+
+✓ Hero That Communicates Value
+  - Clear, specific headline about what the tool does
+  - Immediate access to key information
+  - Quick path to documentation or trial
+
+✓ Code Showcase Section
+  - Syntax-highlighted code examples
+  - Real usage snippets developers can understand
+  - GitHub-style code presentation
+
+✓ Features That Are Technical
+  - Not fluffy marketing copy - actual feature details
+  - Technical specifications
+  - Integration information
+
+✓ Language & Framework Support
+  - Visual display of supported languages
+  - Integration ecosystem mapping
+  - SDK availability clearly stated
+
+✓ Metrics That Matter to Developers
+  - Performance statistics
+  - Adoption numbers (GitHub stars, downloads)
+  - Uptime/reliability data
+
+✓ API Reference Preview
+  - Documentation preview section
+  - Endpoint showcase
+  - Authentication details
+
+✓ Developer Testimonials
+  - Quotes from actual developers
+  - Company/role attribution
+  - Technical community trust signals
+
+✓ Status & Reliability
+  - System status indicator
+  - Uptime guarantees
+  - Support channel information
+
+✓ FAQ That Answers Real Questions
+  - Technical questions addressed
+  - Getting started guidance
+  - Common technical objections
+
+✓ CTA for Next Steps
+  - Documentation links
+  - Free trial/pricing CTAs
+  - GitHub/social links for evaluation
+
+WHY DEVPORT DEVTOOL?
+
+1. SPEAKS DEVELOPER LANGUAGE
+   No marketing fluff. No vague value propositions. Just clear, technical 
+   information that developers can quickly evaluate and understand.
+
+2. CODE-FRIENDLY DESIGN
+   Dedicated sections for code examples, API references, and technical 
+   specifications. We built this for developers who think in functions, 
+   not marketing slogans.
+
+3. CREDIBILITY-DRIVEN
+   Developer decisions are credibility-based. Devport includes all the trust 
+   signals developers look for: documentation quality, community size, 
+   technical specs, and support information.
+
+4. DOCUMENTATION-INTEGRATED
+   Developers won't buy without reading docs. Devport's layout naturally leads 
+   to documentation exploration and trial signups.
+
+5. TECHNICAL DECISION-MAKER TARGETED
+   Whether you're selling to individual developers or enterprise tech leads, 
+   Devport's tone and information density matches technical buyer expectations.
+
+WHO IS THIS FOR?
+
+✓ API Products
+✓ Software Development Kits (SDKs)
+✓ Code Editors & IDEs
+✓ Developer Platforms
+✓ Programming Tools
+✓ CLI Applications
+✓ Testing & QA Tools
+✓ Monitoring Solutions
+✓ Developer Documentation Sites
+✓ Technical SaaS Products
+✓ Programming Education Platforms
+✓ Code Generation Tools
+✓ API Management Platforms
+✓ Developer Communities
+
+WHAT DEVELOPERS WANT TO SEE:
+
+✓ Clear feature descriptions
+✓ Code examples
+✓ Integration information
+✓ Performance metrics
+✓ Documentation quality
+✓ Community size
+✓ Support options
+✓ Pricing transparency
+
+DEVPORT DELIVERS ALL OF THIS.
+
+DEVELOPER TIME VALUE:
+
+How long to build a developer-focused landing page from scratch?
+- Designer time: 20-40 hours
+- Developer time: 15-25 hours
+- Total: 35-65 hours of specialized work
+
+OR:
+
+Time to customize Devport Devport: 2-4 hours
+
+The choice is obvious. Get a professional, developer-optimized landing page 
+in less time than a single bug fix.
+
+PRICE: $49
+
+Less than a lunch outing with the dev team. More valuable than most marketing 
+efforts you'll run this quarter.
+
+================================================================================
+SPEAK TO DEVELOPERS ON THEIR TERMS
+================================================================================
+
+Your tool is technically excellent. Your documentation is thorough. Your 
+features are impressive. Make sure your landing page matches the quality of 
+your product.
+
+Get Devport DevTool Today - $49
+
+================================================================================

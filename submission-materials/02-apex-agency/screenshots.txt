@@ -1,0 +1,7 @@
+01-hero-section.png - Hero section with bold headline, background image, and CTA button
+02-portfolio-work-section.png - Work/Portfolio showcase grid displaying agency projects
+03-services-section.png - Services section with service cards and descriptions
+04-about-section.png - About section featuring agency story and team information
+05-process-section.png - Process section showing agency workflow methodology
+06-awards-recognition-section.png - Awards and recognition section with achievement badges
+07-cta-contact-section.png - Contact CTA section with form elements and contact information

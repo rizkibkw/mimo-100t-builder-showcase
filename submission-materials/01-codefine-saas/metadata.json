@@ -1,0 +1,19 @@
+{
+  "title": "Codefine SaaS Nexus - Modern SaaS Landing Page Template",
+  "description": "<p><strong>Codefine SaaS Nexus</strong> is a premium, conversion-optimized landing page template designed for SaaS startups, software companies, and digital product launches. Built with modern design principles and cutting-edge Bootstrap 5 framework, this template helps you showcase your software solution with style and professionalism.</p><p>Perfect for SaaS applications, web platforms, mobile apps, API products, and cloud services, Codefine SaaS Nexus combines beautiful aesthetics with strategic conversion elements that turn visitors into customers.</p>",
+  "tags": ["landing-page", "saas", "software", "startup", "bootstrap-5", "responsive", "product-launch", "software-template", "web-app", "digital-product", "conversion-optimized", "modern-design", "clean-design", "tech", "software-company"],
+  "category": "Site Templates > Landing Pages",
+  "subcategory": "Product",
+  "price": 49,
+  "urls": {
+    "preview": "http://43.156.187.236/landpage/01-saas-nexus.html"
+  },
+  "compatibility": ["Bootstrap", "Chrome", "Firefox", "Safari", "Edge", "Opera"],
+  "attributes": {
+    "columns": 1,
+    "demo": "Static HTML",
+    "layout": "Responsive",
+    "files_included": ["HTML Files", "CSS Files", "JS Files"],
+    "documentation": "Well documented"
+  }
+}

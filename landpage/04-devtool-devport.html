@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevPort — Ship your API in minutes, not months</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080810;--surface:#10101a;--surface2:#1a1a2e;--border:rgba(255,255,255,0.06);--text:#f0f0f5;--text2:#8888aa;--text3:#44445a;--primary:#06b6d4;--primary-h:#22d3ee;--accent:#a78bfa;--accent2:#34d399;--accent3:#fb923c}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;cursor:default}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+img{max-width:100%;display:block}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* Dot grid background */
+.dot-bg{background-image:radial-gradient(circle,var(--text3) 1px,transparent 1px);background-size:28px 28px}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* Glowing border */
+.glow{border-radius:12px;border:1px solid var(--border);transition:border-color 0.3s,box-shadow 0.3s}
+.glow:hover{border-color:var(--primary);box-shadow:0 0 20px rgba(6,182,212,0.15)}
+
+/* ==================== NAVBAR ==================== */
+.navbar{position:sticky;top:0;z-index:100;background:rgba(8,8,16,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.navbar .container{display:flex;align-items:center;justify-content:space-between;height:68px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
+.nav-logo svg{width:32px;height:32px}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--text2);transition:color 0.2s}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.btn{font-size:14px;font-weight:600;padding:10px 20px;border-radius:8px;cursor:pointer;transition:all 0.2s;border:none;display:inline-flex;align-items:center;gap:8px}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface);border-color:rgba(255,255,255,0.12)}
+.btn-primary{background:var(--primary);color:#000}
+.btn-primary:hover{background:var(--primary-h);box-shadow:0 0 24px rgba(6,182,212,0.4)}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--surface);border-color:var(--primary)}
+
+/* ==================== HERO ==================== */
+.hero{min-height:100vh;display:flex;align-items:center;padding:80px 0;position:relative}
+.hero .container{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-eyebrow{font-size:13px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:2px;margin-bottom:16px}
+.hero h1{font-size:clamp(36px,5vw,60px);font-weight:800;line-height:1.1;margin-bottom:24px}
+.gradient{background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:18px;color:var(--text2);max-width:500px;margin-bottom:36px;line-height:1.7}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap}
+.terminal-window{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.5)}
+.terminal-titlebar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.terminal-dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot-r{background:#ef4444}
+.dot-y{background:#eab308}
+.dot-g{background:#22c55e}
+.terminal-title{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);margin-left:12px}
+.terminal-body{padding:20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7}
+.hl-key{color:var(--accent)}
+.hl-str{color:var(--accent2)}
+.hl-num{color:var(--accent3)}
+.hl-attr{color:var(--primary)}
+
+/* ==================== CODE EXAMPLE ==================== */
+.code-section{padding:100px 0}
+.code-section .container{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.section-label{font-size:13px;font-weight:600;color:var(--primary);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.section-title{font-size:clamp(28px,3.5vw,40px);font-weight:800;margin-bottom:16px}
+.section-desc{color:var(--text2);margin-bottom:28px;font-size:16px;line-height:1.7}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;font-size:13px}
+.code-block .prompt{color:var(--text3)}
+.code-block .cmd{color:var(--primary)}
+.code-list{list-style:none}
+.code-list li{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:15px;color:var(--text2)}
+.code-list li::before{content:'→';color:var(--primary);font-weight:600;flex-shrink:0}
+.fake-terminal{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.fake-terminal .terminal-titlebar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.fake-terminal .terminal-dots{display:flex;gap:6px}
+.fake-terminal .dot{width:12px;height:12px;border-radius:50%}
+.fake-terminal .terminal-title{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);margin-left:12px}
+.fake-output{padding:20px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);line-height:1.9}
+.fake-output .line{opacity:0}
+.fake-output .line.show{opacity:1}
+.fake-output .done{color:var(--accent2)}
+.fake-output .info{color:var(--primary)}
+.fake-output .warn{color:var(--accent3)}
+
+/* ==================== FEATURES ==================== */
+.features{padding:100px 0}
+.features .section-header{text-align:center;margin-bottom:60px}
+.features .section-label{margin-bottom:12px}
+.features .section-title{font-size:clamp(28px,3.5vw,40px);font-weight:800;margin-bottom:16px}
+.features .section-desc{color:var(--text2);max-width:600px;margin:0 auto;font-size:16px}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;transition:all 0.3s;position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--primary);transform:scaleY(0);transition:transform 0.3s;transform-origin:bottom}
+.feature-card:hover::before{transform:scaleY(1)}
+.feature-card:hover{border-color:var(--primary);box-shadow:0 0 30px rgba(6,182,212,0.1)}
+.feature-icon{width:44px;height:44px;background:rgba(6,182,212,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.feature-icon svg{width:22px;height:22px;stroke:var(--primary)}
+.feature-card h3{font-size:17px;font-weight:700;margin-bottom:10px}
+.feature-card p{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ==================== LANGUAGES ==================== */
+.languages{padding:80px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.languages .section-header{text-align:center;margin-bottom:48px}
+.languages .section-title{font-size:clamp(22px,3vw,32px);font-weight:800;margin-bottom:12px}
+.languages .section-desc{color:var(--text2);font-size:15px}
+.lang-badges{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.lang-badge{display:flex;align-items:center;gap:10px;padding:12px 22px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:14px;font-weight:600;color:var(--text2);transition:all 0.3s;cursor:default;filter:grayscale(60%) opacity(0.7)}
+.lang-badge:hover{filter:grayscale(0) opacity(1);border-color:var(--primary);color:var(--text);box-shadow:0 0 16px rgba(6,182,212,0.15)}
+.lang-badge svg{width:20px;height:20px}
+
+/* ==================== METRICS ==================== */
+.metrics{padding:60px 0;background:var(--surface)}
+.metrics .container{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+.metric{text-align:center;padding:20px}
+.metric-value{font-size:clamp(32px,4vw,48px);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.metric-label{font-size:14px;color:var(--text2)}
+
+/* ==================== PRICING ==================== */
+.pricing{padding:100px 0}
+.pricing .section-header{text-align:center;margin-bottom:48px}
+.pricing .section-label{margin-bottom:12px}
+.pricing .section-title{font-size:clamp(28px,3.5vw,40px);font-weight:800;margin-bottom:16px}
+.pricing .section-desc{color:var(--text2);max-width:500px;margin:0 auto;font-size:16px}
+.toggle-wrap{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:56px}
+.toggle-label{font-size:14px;color:var(--text2)}
+.toggle{width:52px;height:28px;background:var(--surface2);border-radius:14px;position:relative;cursor:pointer;border:1px solid var(--border);transition:background 0.3s}
+.toggle::after{content:'';position:absolute;width:22px;height:22px;background:var(--primary);border-radius:50%;top:2px;left:3px;transition:transform 0.3s}
+.toggle.active{background:rgba(6,182,212,0.2)}
+.toggle.active::after{transform:translateX(24px)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;transition:all 0.3s}
+.price-card:hover{border-color:rgba(255,255,255,0.12)}
+.price-card.featured{border-color:var(--primary);background:linear-gradient(180deg,rgba(6,182,212,0.08) 0%,var(--surface) 100%)}
+.price-card.featured::before{content:'Most Popular';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--primary);color:#000;font-size:11px;font-weight:700;padding:4px 16px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}
+.price-name{font-size:14px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.price-amount{display:flex;align-items:baseline;gap:4px;margin-bottom:8px}
+.price-amount .dollar{font-size:24px;font-weight:700;color:var(--text)}
+.price-amount .amount{font-size:52px;font-weight:800}
+.price-amount .period{font-size:14px;color:var(--text2)}
+.price-desc{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.6}
+.price-features{list-style:none;margin-bottom:32px}
+.price-features li{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;color:var(--text2)}
+.price-features li::before{content:'✓';color:var(--primary);font-weight:700;flex-shrink:0}
+.price-features li.disabled{color:var(--text3);text-decoration:line-through}
+.price-features li.disabled::before{content:'×';color:var(--text3)}
+.price-card .btn{width:100%;justify-content:center}
+.price-card.featured .btn-primary{box-shadow:0 0 24px rgba(6,182,212,0.3)}
+
+/* ==================== API REFERENCE ==================== */
+.api-ref{padding:100px 0;background:var(--surface)}
+.api-ref .container{display:grid;grid-template-columns:1fr 1.2fr;gap:48px;align-items:start}
+.api-ref .section-label{margin-bottom:12px}
+.api-ref .section-title{font-size:clamp(24px,3vw,36px);font-weight:800;margin-bottom:16px}
+.api-ref .section-desc{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:32px}
+.api-endpoint-list{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.endpoint-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);transition:background 0.2s;cursor:pointer}
+.endpoint-item:last-child{border-bottom:none}
+.endpoint-item:hover,.endpoint-item.active{background:rgba(6,182,212,0.08)}
+.endpoint-item.active{border-left:3px solid var(--primary)}
+.method{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:4px 8px;border-radius:4px;text-transform:uppercase;flex-shrink:0}
+.method-get{background:rgba(52,211,153,0.15);color:var(--accent2)}
+.method-post{background:rgba(6,182,212,0.15);color:var(--primary)}
+.method-put{background:rgba(251,146,60,0.15);color:var(--accent3)}
+.method-delete{background:rgba(239,68,68,0.15);color:#ef4444}
+.endpoint-path{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2)}
+.api-code-preview{background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.api-code-header{padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.api-code-tabs{display:flex;gap:8px}
+.api-tab{padding:6px 14px;font-size:12px;font-weight:600;color:var(--text2);border-radius:6px;cursor:pointer;transition:all 0.2s}
+.api-tab.active{background:rgba(6,182,212,0.15);color:var(--primary)}
+.api-code-body{padding:20px}
+.api-code-body pre{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;overflow-x:auto}
+.api-response-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);margin-bottom:8px;margin-top:20px}
+
+/* ==================== TESTIMONIALS ==================== */
+.testimonials{padding:100px 0}
+.testimonials .section-header{text-align:center;margin-bottom:56px}
+.testimonials .section-label{margin-bottom:12px}
+.testimonials .section-title{font-size:clamp(28px,3.5vw,40px);font-weight:800}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.testimonial-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px;transition:all 0.3s}
+.testimonial-card:hover{border-color:rgba(255,255,255,0.1);transform:translateY(-4px)}
+.testimonial-quote{font-size:15px;color:var(--text2);line-height:1.7;margin-bottom:24px;font-style:italic}
+.testimonial-author{display:flex;align-items:center;gap:14px}
+.author-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.author-info .name{font-size:15px;font-weight:700;margin-bottom:2px}
+.author-info .role{font-size:13px;color:var(--text2)}
+
+/* ==================== STATUS PAGE ==================== */
+.status-page{padding:80px 0;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.status-page .section-header{text-align:center;margin-bottom:48px}
+.status-page .section-label{margin-bottom:12px}
+.status-page .section-title{font-size:clamp(24px,3vw,32px);font-weight:800;margin-bottom:12px}
+.status-page .section-desc{color:var(--text2);font-size:15px}
+.status-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;max-width:700px;margin:0 auto;overflow:hidden}
+.status-header{display:flex;align-items:center;gap:16px;padding:18px 24px;border-bottom:1px solid var(--border)}
+.status-indicator{width:10px;height:10px;border-radius:50%;background:var(--accent2);box-shadow:0 0 8px var(--accent2)}
+.status-header-text{font-weight:700}
+.status-uptime{font-size:13px;color:var(--text2);margin-left:auto}
+.status-list{list-style:none}
+.status-item{display:flex;align-items:center;padding:14px 24px;border-bottom:1px solid var(--border)}
+.status-item:last-child{border-bottom:none}
+.status-item-name{flex:1;font-size:14px;color:var(--text2)}
+.status-item-dot{width:8px;height:8px;border-radius:50%;margin-right:14px;flex-shrink:0}
+.status-item-dot.operational{background:var(--accent2);box-shadow:0 0 6px var(--accent2)}
+.status-item-dot.degraded{background:var(--accent3)}
+.status-item-pct{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2)}
+
+/* ==================== FAQ ==================== */
+.faq{padding:100px 0}
+.faq .section-header{text-align:center;margin-bottom:56px}
+.faq .section-label{margin-bottom:12px}
+.faq .section-title{font-size:clamp(28px,3.5vw,40px);font-weight:800}
+.faq-list{max-width:720px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item:last-child{border-bottom:none}
+.faq-question{display:flex;align-items:center;justify-content:space-between;padding:22px 0;cursor:pointer;transition:color 0.2s}
+.faq-question:hover{color:var(--primary)}
+.faq-question h3{font-size:16px;font-weight:600}
+.faq-icon{width:24px;height:24px;position:relative;flex-shrink:0;transition:transform 0.3s}
+.faq-icon::before,.faq-icon::after{content:'';position:absolute;background:currentColor;transition:opacity 0.3s}
+.faq-icon::before{width:16px;height:2px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.faq-icon::after{width:2px;height:16px;top:50%;left:50%;transform:translate(-50%,-50%)}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.4s ease}
+.faq-item.open .faq-answer{max-height:400px}
+.faq-answer p{font-size:14px;color:var(--text2);line-height:1.7;padding-bottom:22px}
+
+/* ==================== CTA ==================== */
+.cta-section{padding:100px 0;background:linear-gradient(180deg,var(--bg) 0%,var(--surface) 50%,var(--bg) 100%)}
+.cta-section .container{text-align:center;max-width:640px}
+.cta-section h2{font-size:clamp(28px,4vw,44px);font-weight:800;margin-bottom:16px}
+.cta-section p{color:var(--text2);font-size:17px;margin-bottom:40px}
+.cta-form{display:flex;gap:12px;max-width:500px;margin:0 auto 16px}
+.cta-input{flex:1;padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:15px;color:var(--text);outline:none;transition:border-color 0.2s;font-family:'Inter',sans-serif}
+.cta-input:focus{border-color:var(--primary)}
+.cta-input::placeholder{color:var(--text3)}
+
+/* ==================== FOOTER ==================== */
+.footer{padding:60px 0 32px;border-top:1px solid var(--border)}
+.footer .container{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:40px}
+.footer-brand{max-width:280px}
+.footer-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;margin-bottom:12px}
+.footer-logo svg{width:28px;height:28px}
+.footer-tagline{font-size:13px;color:var(--text2);line-height:1.6}
+.footer-col h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:18px}
+.footer-col ul li{margin-bottom:10px}
+.footer-col ul li a{font-size:14px;color:var(--text2);transition:color 0.2s}
+.footer-col ul li a:hover{color:var(--primary)}
+.footer-bottom{padding-top:32px;margin-top:40px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-size:13px;color:var(--text3)}
+.footer-socials{display:flex;gap:16px}
+.footer-socials a{width:36px;height:36px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.footer-socials a:hover{border-color:var(--primary);background:rgba(6,182,212,0.1)}
+.footer-socials svg{width:16px;height:16px;stroke:var(--text2)}
+.footer-socials a:hover svg{stroke:var(--primary)}
+
+/* Mobile responsive */
+@media(max-width:1024px){
+.features-grid{grid-template-columns:repeat(2,1fr)}
+.metrics .container{grid-template-columns:repeat(2,1fr)}
+.pricing-grid{grid-template-columns:1fr;max-width:400px}
+.api-ref .container{grid-template-columns:1fr}
+.testimonials-grid{grid-template-columns:1fr 1fr}
+.footer .container{grid-template-columns:repeat(3,1fr)}
+.footer-brand{grid-column:1/-1}
+}
+@media(max-width:768px){
+.hero .container{grid-template-columns:1fr}
+.hero{min-height:auto;padding:100px 0 60px}
+.hero-terminal{margin-top:48px}
+.code-section .container{grid-template-columns:1fr}
+.features-grid{grid-template-columns:1fr}
+.testimonials-grid{grid-template-columns:1fr}
+.metrics .container{grid-template-columns:repeat(2,1fr)}
+.lang-badges{gap:10px}
+.footer .container{grid-template-columns:repeat(2,1fr)}
+.footer-brand{grid-column:1/-1}
+.nav-links{display:none}
+.cta-form{flex-direction:column}
+}
+@media(max-width:480px){
+.hero h1{font-size:32px}
+.testimonials-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body class="dot-bg">
+
+<!-- NAVBAR -->
+<nav class="navbar">
+<div class="container">
+<a href="#" class="nav-logo">
+<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="8" fill="#06b6d4"/>
+<path d="M10 12L6 16L10 20" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M22 12L26 16L22 20" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 10L14 22" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
+DevPort
+</a>
+<ul class="nav-links">
+<li><a href="#">Product</a></li>
+<li><a href="#">Docs</a></li>
+<li><a href="#">Pricing</a></li>
+<li><a href="#">Status</a></li>
+<li><a href="#">Changelog</a></li>
+</ul>
+<div class="nav-actions">
+<a href="#" class="btn btn-ghost">Sign in</a>
+<a href="#" class="btn btn-primary">Get API key</a>
+</div>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="container">
+<div>
+<p class="hero-eyebrow">3,200+ developers building faster</p>
+<h1>Ship your API<br>in <span class="gradient">minutes</span>, not months</h1>
+<p class="hero-sub">The complete API platform for modern teams. Generate SDKs, manage docs, test endpoints, and monitor traffic — all in one place.</p>
+<div class="hero-btns">
+<a href="#" class="btn btn-primary">Start building free</a>
+<a href="#" class="btn btn-outline">Read the docs</a>
+</div>
+</div>
+<div class="hero-terminal">
+<div class="terminal-window">
+<div class="terminal-titlebar">
+<div class="terminal-dots">
+<span class="dot dot-r"></span>
+<span class="dot dot-y"></span>
+<span class="dot dot-g"></span>
+</div>
+<span class="terminal-title">bash — devport~terminal</span>
+</div>
+<div class="terminal-body">
+<span class="hl-attr">$</span> <span class="cmd">curl -X GET https://api.devport.io/v1/users/42</span><br>
+<span class="hl-attr">$</span> <span class="hl-key">Authorization</span>: <span class="hl-str">Bearer dp_live_••••••••</span><br><br>
+<span class="hl-attr">{</span><br>
+&nbsp;&nbsp;<span class="hl-str">"id"</span>: <span class="hl-num">42</span>,<br>
+&nbsp;&nbsp;<span class="hl-str">"name"</span>: <span class="hl-str">"Sarah Chen"</span>,<br>
+&nbsp;&nbsp;<span class="hl-str">"email"</span>: <span class="hl-str">"sarah@acme.io"</span>,<br>
+&nbsp;&nbsp;<span class="hl-str">"plan"</span>: <span class="hl-str">"pro"</span>,<br>
+&nbsp;&nbsp;<span class="hl-str">"created_at"</span>: <span class="hl-str">"2025-03-14T09:22:00Z"</span>,<br>
+&nbsp;&nbsp;<span class="hl-str">"sdk_ready"</span>: <span class="hl-num">true</span><br>
+<span class="hl-attr">}</span><br><br>
+<span class="hl-key">X-RateLimit-Remaining</span>: <span class="hl-num">4999</span><br>
+<span class="hl-key">X-Response-Time</span>: <span class="hl-num">38ms</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CODE EXAMPLE -->
+<section class="code-section">
+<div class="container">
+<div class="reveal">
+<p class="section-label">Getting Started</p>
+<h2 class="section-title">One command to rule them all</h2>
+<p class="section-desc">Install the DevPort CLI and go from zero to production in under a minute. Automatic SDK generation, docs deployment, and webhook management — all with a single tool.</p>
+<div class="code-block">
+<span class="prompt">$</span> <span class="cmd">npm install -g @devport/cli</span><br>
+<span class="prompt">$</span> <span class="cmd">devport init my-api</span><br>
+<span class="prompt">$</span> <span class="cmd">devport deploy</span>
+</div>
+<ul class="code-list">
+<li>Auto-generated SDKs for 8 languages</li>
+<li>Live documentation, always in sync</li>
+<li>Built-in rate limiting & auth</li>
+</ul>
+</div>
+<div class="reveal">
+<div class="fake-terminal">
+<div class="terminal-titlebar">
+<div class="terminal-dots">
+<span class="dot dot-r"></span>
+<span class="dot dot-y"></span>
+<span class="dot dot-g"></span>
+</div>
+<span class="terminal-title">bash — devport~sdk-gen</span>
+</div>
+<div class="fake-output" id="fake-output">
+<div class="line">$ devport sdk generate --lang=typescript</div>
+<div class="line">✓ Connected to DevPort API</div>
+<div class="line">✓ Fetched 24 endpoints from OpenAPI spec</div>
+<div class="line">⚙ Generating TypeScript SDK...</div>
+<div class="line">  ████████████████████ 100%</div>
+<div class="line">✓ Generated: ./sdk/typescript</div>
+<div class="line info">→ src/client.ts (2.4k lines)</div>
+<div class="line info">→ src/endpoints/users.ts</div>
+<div class="line info">→ src/endpoints/payments.ts</div>
+<div class="line info">→ src/types.ts (892 types)</div>
+<div class="line done">✓ SDK generated in 3.2s</div>
+<div class="line">$</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+<div class="container">
+<div class="section-header reveal">
+<p class="section-label">Features</p>
+<h2 class="section-title">Everything you need to ship APIs</h2>
+<p class="section-desc">From initial design to production monitoring, DevPort covers the entire API lifecycle so you can focus on what matters — building great products.</p>
+</div>
+<div class="features-grid">
+<div class="feature-card reveal">
+<div class="feature-icon">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+</div>
+<h3>Instant SDK Generation</h3>
+<p>Generate fully-typed SDKs for TypeScript, Python, Go, Ruby, Java, PHP, Swift, and Kotlin in seconds. Always in sync with your API.</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+</div>
+<h3>Auto-updating Docs</h3>
+<p>Your API documentation updates automatically with every deployment. No more writing docs by hand — your OpenAPI spec is the source of truth.</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"/></svg>
+</div>
+<h3>API Testing Playground</h3>
+<p>Interactive API explorer lets you test any endpoint directly from the browser. Build requests, inspect responses, and share test cases with your team.</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+</div>
+<h3>Traffic Monitoring</h3>
+<p>Real-time metrics on API usage, latency percentiles, error rates, and top endpoints. Get alerted before small issues become production outages.</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+</div>
+<h3>Team Collaboration</h3>
+<p>Invite your whole team with role-based access. Comment on endpoints, review changes in a diff view, and deploy with approval workflows.</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/></svg>
+</div>
+<h3>Version Management</h3>
+<p>Manage multiple API versions with semantic versioning. Blue-green deployments, canary releases, and instant rollbacks with zero downtime.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- LANGUAGES -->
+<section class="languages">
+<div class="container">
+<div class="section-header reveal">
+<h2 class="section-title">Generated SDKs for every stack</h2>
+<p class="section-desc">First-class SDKs generated from your OpenAPI spec. Type-safe, documented, and maintained automatically.</p>
+</div>
+<div class="lang-badges reveal">
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#3178c6"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 011.306.34v2.458a3.95 3.95 0 00-.643-.361 5.093 5.093 0 00-.717-.26 5.453 5.453 0 00-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 00-.623.242c-.17.104-.3.229-.393.374a.888.888 0 00-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 01-1.012 1.085 4.38 4.38 0 01-1.487.65c-.566.143-1.163.214-1.79.214a9.4 9.4 0 01-1.84-.164 5.544 5.544 0 01-1.512-.493v-2.63a5.033 5.033 0 003.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 00-.131-1.142 1.704 1.704 0 00-.537-.367 4.74 4.74 0 00-.794-.251c-.311-.068-.662-.138-1.052-.21a8.028 8.028 0 01-1.241-.302 4.825 4.825 0 01-1.018-.436 2.45 2.45 0 01-.696-.717 1.948 1.948 0 01-.25-1.042c0-.435.079-.81.236-1.124.158-.314.374-.577.65-.79.276-.212.595-.373.957-.483.362-.11.74-.18 1.134-.21.395-.03.788-.045 1.181-.045zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/></svg>
+TypeScript
+</div>
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#3776ab"><circle cx="12" cy="12" r="10"/></svg>
+Python
+</div>
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#00add8"><path d="M1.811 10.231c-.047 0-.058-.023-.035-.059l.246-.315c.023-.035.081-.058.128-.058h4.172c.046 0 .058.035.035.07l-.189.28c-.023.036-.082.07-.117.07zM.047 11.306c-.047 0-.059-.023-.035-.058l.245-.316c.023-.035.082-.058.129-.058h5.328c.047 0 .07.035.058.07l-.093.28c-.012.047-.058.07-.105.07zm2.828 1.075c-.047 0-.059-.035-.035-.07l.163-.292c.023-.035.07-.07.117-.07h2.337c.047 0 .07.035.07.082l-.023.28c0 .047-.047.082-.082.082zm12.129-2.36c-.736.187-1.239.327-1.963.514-.176.046-.187.058-.34-.117-.174-.199-.304-.327-.548-.491-.737-.482-1.459-.715-2.312-.715-.968 0-1.846.35-2.416 1.05-.304.363-.539.797-.686 1.27-.069.245-.105.49-.105.735 0 .199.023.385.069.568.117.492.395.91.797 1.205.327.24.71.368 1.106.368.198 0 .395-.035.584-.117.304-.128.497-.35.644-.639.011-.023.023-.046.035-.07.375.187.768.315 1.205.363.615.07 1.229-.07 1.71-.397.598-.397.903-1.005.903-1.697 0-.715-.362-1.32-.95-1.627zm-2.52-.515c-.105-.245-.245-.46-.435-.627-.338-.28-.768-.42-1.205-.42-.315 0-.639.058-.938.199-.298.14-.568.339-.784.598-.198.24-.32.514-.392.784a2.75 2.75 0 00-.105.57c0 .327.07.65.21.96.117.26.279.502.502.703.315.28.704.444 1.106.444.38 0 .726-.152 1.004-.42.26-.24.435-.562.497-.915.023-.128.035-.257.035-.386 0-.198-.035-.385-.093-.568a1.827 1.827 0 00-.502-.856zm-5.866.515c-.736.187-1.239.327-1.963.514-.176.046-.187.058-.34-.117-.174-.199-.303-.327-.548-.491-.737-.482-1.459-.715-2.312-.715-.968 0-1.846.35-2.416 1.05-.304.363-.539.797-.686 1.27-.07.245-.105.49-.105.735 0 .199.023.385.07.568.117.492.394.91.796 1.205.327.24.71.368 1.106.368.198 0 .395-.035.584-.117.304-.128.497-.35.644-.639.012-.023.023-.046.035-.07.375.187.768.315 1.205.363.615.07 1.229-.07 1.71-.397.598-.397.903-1.005.903-1.697 0-.715-.362-1.32-.95-1.627zm-2.52-.515c-.105-.245-.245-.46-.435-.627-.338-.28-.768-.42-1.205-.42-.315 0-.639.058-.938.199-.299.14-.568.339-.784.598-.198.24-.32.514-.392.784a2.75 2.75 0 00-.105.57c0 .327.07.65.21.96.117.26.279.502.502.703.315.28.704.444 1.106.444.38 0 .726-.152 1.004-.42.26-.24.435-.562.497-.915.023-.128.035-.257.035-.386 0-.198-.035-.385-.093-.568a1.827 1.827 0 00-.502-.856z"/></svg>
+Go
+</div>
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#cc342d"><path d="M20.156.083c1.011.122 1.5.733 1.5 1.411v20.012c0 .677-.489 1.289-1.5 1.411V.083zM9.292 14.792l-1.74 3.908-3.608-1.635 5.348-2.273zm-.833-1.033l-1.27 2.856-1.667-.756 2.937-2.1zm-.882.398l-1.28 2.88-1.667-.756 2.947-2.124zm-.882.398l-1.279 2.879-1.667-.756 2.946-2.123zm-.882.399l-1.279 2.879-1.667-.757 2.946-2.122zm-.882.399l-1.278 2.878-1.668-.756 2.946-2.122zm-.881.399l-1.28 2.878-1.667-.756 1.28-2.879 1.667.757zm-.882.399l-1.279 2.878-1.667-.756 1.28-2.879 1.666.757zm-.881.399l-1.28 2.878-1.667-.756 1.28-2.879 1.667.757zm-.882.398l-1.28 2.879-1.667-.757 1.28-2.878 1.667.756zm-.882.399l-1.279 2.878-1.667-.756 1.28-2.879 1.666.757zm-.882.399l-1.278 2.878-1.668-.756 1.28-2.879 1.666.757zm-.881.398l-1.28 2.879-1.667-.757 1.28-2.878 1.667.756zm-.882.399l-1.279 2.878-1.667-.756 1.28-2.879 1.666.757zm-.882.399l-1.278 2.878-1.668-.756 1.28-2.879 1.666.757zm2.633-5.772l-1.633 3.672-3.608-1.635 5.241-2.037zm3.543-3.906l-6.176 13.874 5.348-2.272 1.689-3.805 3.608 1.635-4.469 1.91V6.574z"/></svg>
+Ruby
+</div>
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#007396"><path d="M8.851 18.56s-1.451-.776-1.451-1.972c0-1.196 1.451-1.972 1.451-1.972s1.432.784 1.432 1.972c0 1.188-1.432 1.972-1.432 1.972zm1.057-2.922c-.576.576-1.469.888-2.475.888-.936 0-1.872-.276-2.568-.78l1.296-1.26c.876.732 2.076 1.056 3.24 1.056 1.164 0 1.716-.18 1.716-.576 0-.216-.144-.396-.42-.516-.276-.12-.756-.264-1.764-.804-.948-.516-1.644-1.248-1.644-2.196 0-1.188 1.008-2.16 2.58-2.16 1.044 0 1.944.36 2.58.984l-1.164 1.236c-.42-.408-1.068-.696-1.776-.696-.492 0-.804.156-.804.42 0 .204.264.348.78.54 1.296.492 1.908 1.104 1.908 2.16 0 1.332-1.14 2.328-2.652 2.328zm6.744-5.076v7.764h-1.764v-7.764h-1.404v-1.7h4.572v1.7h-1.404zm3.564 0h1.764v5.016c0 .732.432 1.164 1.116 1.164.648 0 .972-.42 1.08-.6l.816.864c-.276.372-.78.684-1.512.684-1.056 0-1.836-.66-1.836-2.064v-4.92h-1.428v-.144zm6.216 3.024l-2.736-3.024h2.196c.588 0 .948.312.948.804 0 .36-.216.684-.6.804l1.296 1.416h-1.104zm-1.548 2.196c-.684 0-1.188-.348-1.188-.984 0-.66.6-.984 1.296-.984.66 0 1.14.324 1.14.984 0 .636-.492.984-1.248.984zm.876-8.58c0-.36.3-.66.672-.66.372 0 .672.3.672.66 0 .36-.3.66-.672.66-.372 0-.672-.3-.672-.66z"/></svg>
+Java
+</div>
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#777bb3"><path d="M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.296 1.024-.738.06-.57-.266-.92-.854-1.046-.21-.044-.336-.09-.453-.164-.117-.074-.18-.18-.18-.318 0-.254.126-.382.406-.382zm.335 2.526-.657-3.318-.62.795.01.036.054.235c.047.198.117.326.232.435.116.11.254.2.407.262.156.062.31.106.47.117h.1c.084 0 .166-.01.24-.027a1.71 1.71 0 00.253-.072l.03.01c.083.027.156.054.226.072.072.018.135.027.198.027.28 0 .54-.09.757-.236a1.94 1.94 0 00.58-.656 2.5 2.5 0 00.27-.656 2.6 2.6 0 00.09-.703c.01-.253-.03-.47-.108-.656a1.55 1.55 0 00-.352-.524 1.7 1.7 0 00-.58-.362 1.97 1.97 0 00-.757-.135c-.19 0-.38.028-.572.09a2.75 2.75 0 00-.543.236zm6.06 1.41c-.054.244-.135.434-.27.6-.136.163-.298.3-.48.414-.184.114-.38.2-.59.253-.21.054-.424.072-.634.072a3.7 3.7 0 01-.634-.054 2.4 2.4 0 01-.58-.182 1.7 1.7 0 01-.47-.344 1.1 1.1 0 01-.216-.47 2.2 2.2 0 01-.063-.554c0-.18.018-.353.063-.526.046-.172.108-.334.19-.48a2.3 2.3 0 01.297-.415c.118-.127.243-.233.388-.316.145-.082.298-.145.47-.19a2.1 2.1 0 01.544-.072c.172 0 .343.018.507.054.163.036.316.09.452.163a1.3 1.3 0 01.36.27c.1.108.18.235.234.38.054.145.09.298.09.46.01.146-.01.29-.063.426a1.1 1.1 0 01-.226.38zm-1.022-.57a.9.9 0 00-.19-.307.9.9 0 00-.325-.216.98.98 0 00-.434-.09c-.19 0-.36.036-.515.108a.9.9 0 00-.37.28.85.85 0 00-.163.38.85.85 0 00-.036.416c.01.145.045.27.108.39.063.118.145.216.252.298.108.082.234.145.38.19.145.044.307.063.47.063.19 0 .352-.036.498-.108a.9.9 0 00.343-.262.8.8 0 00.163-.352.8.8 0 00.018-.38.9.9 0 00-.1-.344.9.9 0 00-.234-.27 1.3 1.3 0 00-.37-.217zm-3.877.57h-.944l-.516 2.648h.838c.557 0 .97-.296 1.024-.738.06-.57-.265-.92-.853-1.046-.21-.044-.336-.09-.453-.164-.118-.074-.18-.18-.18-.318 0-.254.126-.382.406-.382zm.334 2.526-.657-3.318-.62.795.01.036.053.235c.048.198.118.326.234.435.117.11.253.2.406.262.157.062.31.106.47.117h.1c.084 0 .166-.01.24-.027a1.71 1.71 0 00.253-.072l.03.01c.083.027.157.054.227.072.07.018.135.027.198.027.28 0 .54-.09.757-.236a1.94 1.94 0 00.58-.656 2.5 2.5 0 00.27-.656 2.6 2.6 0 00.09-.703c.01-.253-.03-.47-.108-.656a1.55 1.55 0 00-.352-.524 1.7 1.7 0 00-.58-.362 1.97 1.97 0 00-.757-.135c-.19 0-.38.028-.572.09a2.75 2.75 0 00-.543.236zm6.06 1.41c-.054.244-.135.434-.27.6-.136.163-.298.3-.48.414-.184.114-.38.2-.59.253-.21.054-.424.072-.634.072a3.7 3.7 0 01-.634-.054 2.4 2.4 0 01-.58-.182 1.7 1.7 0 01-.47-.344 1.1 1.1 0 01-.216-.47 2.2 2.2 0 01-.063-.554c0-.18.018-.353.063-.526.046-.172.108-.334.19-.48a2.3 2.3 0 01.297-.415c.118-.127.243-.233.388-.316.145-.082.298-.145.47-.19a2.1 2.1 0 01.544-.072c.172 0 .343.018.507.054.163.036.316.09.452.163a1.3 1.3 0 01.36.27c.1.108.18.235.234.38.054.145.09.298.09.46.01.146-.01.29-.063.426a1.1 1.1 0 01-.226.38zm-1.022-.57a.9.9 0 00-.19-.307.9.9 0 00-.325-.216.98.98 0 00-.434-.09c-.19 0-.36.036-.515.108a.9.9 0 00-.37.28.85.85 0 00-.163.38.85.85 0 00-.036.416c.01.145.045.27.108.39.063.118.145.216.252.298.108.082.234.145.38.19.145.044.307.063.47.063.19 0 .352-.036.498-.108a.9.9 0 00.343-.262.8.8 0 00.163-.352.8.8 0 00.018-.38.9.9 0 00-.1-.344.9.9 0 00-.234-.27 1.3 1.3 0 00-.37-.217z"/></svg>
+PHP
+</div>
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#f05138"><path d="M18.44 15.79c-.12-.1-.28-.14-.44-.12-1.18.13-2.24-.74-2.44-1.94-.16-.96.28-1.82.98-2.28.04-.02.06-.06.06-.1v-1.08c0-.4-.32-.72-.72-.72h-.12c-.36 0-.68.24-.76.6-.1.48-.38.8-.74.8h-.48c-.4 0-.72.32-.72.72v2.56c0 .4.32.72.72.72h.12c.36 0 .68-.24.76-.6.1-.48.38-.8.74-.8h.48c.04 0 .08-.02.1-.06.2-.28.56-.44.9-.44h.04c.48 0 .88.28 1.04.72.2.56-.16 1.24-.72 1.4-.04.02-.08.02-.12.02h-.48c-.08 0-.14.06-.14.14v.32c0 .08.06.14.14.14h.8c.4 0 .72-.32.72-.72v-.52z"/></svg>
+Swift
+</div>
+<div class="lang-badge">
+<svg viewBox="0 0 24 24" fill="#7f52ff"><path d="M3.28 0H2v3.28l1.2 1.2V20.72l-1.2 1.2V24h3.28l1.2-1.2h12.96l1.2 1.2H22V3.28L20.8 2.08H3.28V0zm4.64 5.6h8.56v2.24H7.92v-2.24zm0 4.08h8.56v2.24H7.92v-2.24z"/></svg>
+Kotlin
+</div>
+</div>
+</div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics">
+<div class="container reveal">
+<div class="metric">
+<div class="metric-value">2.4B</div>
+<div class="metric-label">API calls / month</div>
+</div>
+<div class="metric">
+<div class="metric-value">99.97%</div>
+<div class="metric-label">Uptime SLA</div>
+</div>
+<div class="metric">
+<div class="metric-value">&lt;45ms</div>
+<div class="metric-label">Avg. latency</div>
+</div>
+<div class="metric">
+<div class="metric-value">140+</div>
+<div class="metric-label">Countries</div>
+</div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing">
+<div class="container">
+<div class="section-header reveal">
+<p class="section-label">Pricing</p>
+<h2 class="section-title">Simple, transparent pricing</h2>
+<p class="section-desc">Start free, scale as you grow. No hidden fees, no surprises.</p>
+</div>
+<div class="toggle-wrap reveal">
+<span class="toggle-label">Monthly</span>
+<div class="toggle" id="pricing-toggle"></div>
+<span class="toggle-label">Annual <span style="color:var(--accent2);font-size:12px">-20%</span></span>
+</div>
+<div class="pricing-grid reveal">
+<div class="price-card">
+<p class="price-name">Free</p>
+<div class="price-amount">
+<span class="dollar">$</span>
+<span class="amount" data-monthly="0" data-annual="0">0</span>
+<span class="period">/mo</span>
+</div>
+<p class="price-desc">Perfect for side projects and experimenting with the platform.</p>
+<ul class="price-features">
+<li>1,000 API calls/month</li>
+<li>1 Project</li>
+<li>Basic SDK generation</li>
+<li>Community support</li>
+<li class="disabled">Custom domains</li>
+<li class="disabled">Team collaboration</li>
+<li class="disabled">Advanced analytics</li>
+</ul>
+<a href="#" class="btn btn-outline">Get started</a>
+</div>
+<div class="price-card featured">
+<p class="price-name">Pro</p>
+<div class="price-amount">
+<span class="dollar">$</span>
+<span class="amount" data-monthly="49" data-annual="39">49</span>
+<span class="period">/mo</span>
+</div>
+<p class="price-desc">For growing teams that need more power and flexibility.</p>
+<ul class="price-features">
+<li>1M API calls/month</li>
+<li>10 Projects</li>
+<li>All 8 SDK languages</li>
+<li>Auto-updating docs</li>
+<li>Custom domains</li>
+<li>Team collaboration</li>
+<li class="disabled">Advanced analytics</li>
+</ul>
+<a href="#" class="btn btn-primary">Start free trial</a>
+</div>
+<div class="price-card">
+<p class="price-name">Team</p>
+<div class="price-amount">
+<span class="dollar">$</span>
+<span class="amount" data-monthly="149" data-annual="119">149</span>
+<span class="period">/mo</span>
+</div>
+<p class="price-desc">For companies running production APIs at scale.</p>
+<ul class="price-features">
+<li>Unlimited API calls</li>
+<li>Unlimited Projects</li>
+<li>All 8 SDK languages</li>
+<li>Auto-updating docs</li>
+<li>Custom domains</li>
+<li>Team collaboration</li>
+<li>Advanced analytics</li>
+</ul>
+<a href="#" class="btn btn-outline">Contact sales</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- API REFERENCE -->
+<section class="api-ref">
+<div class="container">
+<div class="reveal">
+<p class="section-label">API Reference</p>
+<h2 class="section-title">Explore the reference</h2>
+<p class="section-desc">Full-featured API explorer with syntax-highlighted code examples, request/response previews, and instant SDK generation — all interactive, all in your browser.</p>
+</div>
+<div class="api-endpoint-list reveal">
+<div class="endpoint-item active">
+<span class="method method-get">GET</span>
+<span class="endpoint-path">/v1/users</span>
+</div>
+<div class="endpoint-item">
+<span class="method method-post">POST</span>
+<span class="endpoint-path">/v1/users</span>
+</div>
+<div class="endpoint-item">
+<span class="method method-get">GET</span>
+<span class="endpoint-path">/v1/users/{id}</span>
+</div>
+<div class="endpoint-item">
+<span class="method method-put">PUT</span>
+<span class="endpoint-path">/v1/users/{id}</span>
+</div>
+<div class="endpoint-item">
+<span class="method method-delete">DELETE</span>
+<span class="endpoint-path">/v1/users/{id}</span>
+</div>
+<div class="endpoint-item">
+<span class="method method-get">GET</span>
+<span class="endpoint-path">/v1/payments</span>
+</div>
+<div class="endpoint-item">
+<span class="method method-post">POST</span>
+<span class="endpoint-path">/v1/payments/initialize</span>
+</div>
+</div>
+<div class="api-code-preview reveal">
+<div class="api-code-header">
+<div class="api-code-tabs">
+<span class="api-tab active">TypeScript</span>
+<span class="api-tab">Python</span>
+<span class="api-tab">Go</span>
+</div>
+<div style="font-size:12px;color:var(--text3)">GET /v1/users</div>
+</div>
+<div class="api-code-body">
+<pre><code><span class="hl-key">import</span> { DevPort } <span class="hl-key">from</span> <span class="hl-str">'@devport/sdk'</span>;
+
+<span class="hl-key">const</span> client = <span class="hl-key">new</span> DevPort(<span class="hl-str">'dp_live_••••••••'</span>);
+
+<span class="hl-key">const</span> users = <span class="hl-key">await</span> client.users.<span class="hl-attr">list</span>({
+  <span class="hl-attr">limit</span>: <span class="hl-num">20</span>,
+  <span class="hl-attr">offset</span>: <span class="hl-num">0</span>,
+  <span class="hl-attr">status</span>: <span class="hl-str">'active'</span>
+});
+
+<span class="hl-key">console</span>.<span class="hl-attr">log</span>(users.<span class="hl-attr">data</span>);</code></pre>
+<div class="api-response-label">Response</div>
+<pre><code><span class="hl-attr">{</span>
+  <span class="hl-str">"data"</span>: <span class="hl-attr">[</span>
+    <span class="hl-attr">{</span>
+      <span class="hl-str">"id"</span>: <span class="hl-num">42</span>,
+      <span class="hl-str">"name"</span>: <span class="hl-str">"Sarah Chen"</span>,
+      <span class="hl-str">"email"</span>: <span class="hl-str">"sarah@acme.io"</span>,
+      <span class="hl-str">"plan"</span>: <span class="hl-str">"pro"</span>
+    <span class="hl-attr">}</span>
+  <span class="hl-attr">]</span>,
+  <span class="hl-str">"meta"</span>: <span class="hl-attr">{</span>
+    <span class="hl-str">"total"</span>: <span class="hl-num">148</span>,
+    <span class="hl-str">"limit"</span>: <span class="hl-num">20</span>,
+    <span class="hl-str">"offset"</span>: <span class="hl-num">0</span>
+  <span class="hl-attr">}</span>
+<span class="hl-attr">}</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+<div class="container">
+<div class="section-header reveal">
+<p class="section-label">Testimonials</p>
+<h2 class="section-title">Loved by developers</h2>
+</div>
+<div class="testimonials-grid">
+<div class="testimonial-card reveal">
+<p class="testimonial-quote">"DevPort cut our API integration time from weeks to hours. The auto-generated SDKs are incredibly well-made — better than anything we'd build ourselves."</p>
+<div class="testimonial-author">
+<div class="author-avatar" style="background:linear-gradient(135deg,var(--primary),var(--accent))">SC</div>
+<div class="author-info">
+<div class="name">Sarah Chen</div>
+<div class="role">CTO · Acme Labs</div>
+</div>
+</div>
+</div>
+<div class="testimonial-card reveal">
+<p class="testimonial-quote">"We migrated our entire API infrastructure to DevPort in a weekend. The docs update themselves now — it's genuinely magical. Our developer experience scores doubled."</p>
+<div class="testimonial-author">
+<div class="author-avatar" style="background:linear-gradient(135deg,var(--accent),var(--accent2))">MR</div>
+<div class="author-info">
+<div class="name">Marcus Rivera</div>
+<div class="role">Lead Engineer · FinStack</div>
+</div>
+</div>
+</div>
+<div class="testimonial-card reveal">
+<p class="testimonial-quote">"The traffic monitoring alone is worth the price. We caught a memory leak in production before it became an outage. The alerting is incredibly smart."</p>
+<div class="testimonial-author">
+<div class="author-avatar" style="background:linear-gradient(135deg,var(--accent3),var(--primary))">AK</div>
+<div class="author-info">
+<div class="name">Aisha Kowalski</div>
+<div class="role">Platform Lead · Streamline</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- STATUS PAGE -->
+<section class="status-page">
+<div class="container">
+<div class="section-header reveal">
+<p class="section-label">System Status</p>
+<h2 class="section-title">All systems operational</h2>
+<p class="section-desc">Real-time status of all DevPort infrastructure components.</p>
+</div>
+<div class="status-card reveal">
+<div class="status-header">
+<span class="status-indicator"></span>
+<span class="status-header-text">All Systems Operational</span>
+<span class="status-uptime">100% uptime last 90 days</span>
+</div>
+<ul class="status-list">
+<li class="status-item">
+<span class="status-item-dot operational"></span>
+<span class="status-item-name">API Services</span>
+<span class="status-item-pct">100%</span>
+</li>
+<li class="status-item">
+<span class="status-item-dot operational"></span>
+<span class="status-item-name">SDK Generation</span>
+<span class="status-item-pct">100%</span>
+</li>
+<li class="status-item">
+<span class="status-item-dot operational"></span>
+<span class="status-item-name">Documentation</span>
+<span class="status-item-pct">100%</span>
+</li>
+<li class="status-item">
+<span class="status-item-dot operational"></span>
+<span class="status-item-name">Webhook Delivery</span>
+<span class="status-item-pct">99.99%</span>
+</li>
+<li class="status-item">
+<span class="status-item-dot operational"></span>
+<span class="status-item-name">Analytics Pipeline</span>
+<span class="status-item-pct">100%</span>
+</li>
+<li class="status-item">
+<span class="status-item-dot operational"></span>
+<span class="status-item-name">CDN Edge Network</span>
+<span class="status-item-pct">100%</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+<div class="container">
+<div class="section-header reveal">
+<p class="section-label">FAQ</p>
+<h2 class="section-title">Common questions</h2>
+</div>
+<div class="faq-list">
+<div class="faq-item reveal">
+<div class="faq-question">
+<h3>What are the rate limits on the free plan?</h3>
+<div class="faq-icon"></div>
+</div>
+<div class="faq-answer">
+<p>The free plan includes 1,000 API calls per month, with a burst limit of 60 requests per minute. Pro plans get 1M calls/month with 1,000 requests/minute. Team plans are unlimited with custom rate limits based on your agreement.</p>
+</div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-question">
+<h3>Which programming languages are supported for SDK generation?</h3>
+<div class="faq-icon"></div>
+</div>
+<div class="faq-answer">
+<p>DevPort generates first-class SDKs for TypeScript, Python, Go, Ruby, Java, PHP, Swift, and Kotlin. All SDKs are generated from your OpenAPI 3.0 specification and include full type safety, comprehensive JSDoc/docstrings, and are version-controlled alongside your API.</p>
+</div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-question">
+<h3>How do I migrate an existing API to DevPort?</h3>
+<div class="faq-icon"></div>
+</div>
+<div class="faq-answer">
+<p>Migration is straightforward — just upload your existing OpenAPI spec (JSON or YAML), and DevPort will automatically generate SDKs, documentation, and set up monitoring. For REST APIs without a spec, our CLI can introspect your endpoints and generate one automatically. Most teams are fully migrated within a day.</p>
+</div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-question">
+<h3>Do you offer enterprise plans with custom SLAs?</h3>
+<div class="faq-icon"></div>
+</div>
+<div class="faq-answer">
+<p>Yes. Enterprise plans include 99.99% uptime SLA, dedicated infrastructure, custom rate limits, SSO/SAML authentication, audit logs, HIPAA/ SOC2 compliance support, and a dedicated customer success manager. Contact our sales team for pricing and a custom proposal.</p>
+</div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-question">
+<h3>What's your uptime guarantee and compensation policy?</h3>
+<div class="faq-icon"></div>
+</div>
+<div class="faq-answer">
+<p>DevPort guarantees 99.97% monthly uptime for Pro and Team plans. If we fall below this threshold in a calendar month, you'll receive a service credit proportional to the downtime. Enterprise customers receive enhanced SLAs with direct escalation paths and incident response guarantees.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+<div class="container reveal">
+<h2>Start building your API today</h2>
+<p>Join 3,200+ developers shipping faster with DevPort. No credit card required.</p>
+<form class="cta-form" onsubmit="event.preventDefault();">
+<input type="email" class="cta-input" placeholder="Enter your work email">
+<button type="submit" class="btn btn-primary">Get started</button>
+</form>
+<p style="font-size:12px;color:var(--text3)">Free forever plan available. No credit card required.</p>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+<div class="container">
+<div class="footer-brand">
+<div class="footer-logo">
+<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" rx="8" fill="#06b6d4"/>
+<path d="M10 12L6 16L10 20" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M22 12L26 16L22 20" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18 10L14 22" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
+DevPort
+</div>
+<p class="footer-tagline">The complete API platform for modern teams. Ship faster, scale confidently.</p>
+</div>
+<div class="footer-col">
+<h4>Product</h4>
+<ul>
+<li><a href="#">Features</a></li>
+<li><a href="#">Pricing</a></li>
+<li><a href="#">Changelog</a></li>
+<li><a href="#">Roadmap</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>Developers</h4>
+<ul>
+<li><a href="#">Documentation</a></li>
+<li><a href="#">API Reference</a></li>
+<li><a href="#">SDKs</a></li>
+<li><a href="#">Status</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>Company</h4>
+<ul>
+<li><a href="#">About</a></li>
+<li><a href="#">Blog</a></li>
+<li><a href="#">Careers</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>Legal</h4>
+<ul>
+<li><a href="#">Privacy</a></li>
+<li><a href="#">Terms</a></li>
+<li><a href="#">Security</a></li>
+<li><a href="#">Cookies</a></li>
+</ul>
+</div>
+<div class="footer-bottom">
+<p class="footer-copy">© 2026 DevPort, Inc. All rights reserved.</p>
+<div class="footer-socials">
+<a href="#" aria-label="Twitter">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.671 8.671L17.44 3h-1.644l-5.333 6.112-3.872-3.872-1.644 1.644 5.126 5.813zM5.5 13.5l1.594 4.84 4.44-4.44-2.157-2.157-3.877 1.757zM5 21l9-9"/></svg>
+</a>
+<a href="#" aria-label="GitHub">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+</a>
+<a href="#" aria-label="Discord">
+<svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+
+<script>
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+reveals.forEach(el => revealObserver.observe(el));
+
+// Pricing toggle
+const toggle = document.getElementById('pricing-toggle');
+const amounts = document.querySelectorAll('.amount');
+toggle.addEventListener('click', () => {
+  toggle.classList.toggle('active');
+  const isAnnual = toggle.classList.contains('active');
+  amounts.forEach(el => {
+    el.textContent = isAnnual ? el.dataset.annual : el.dataset.monthly;
+  });
+});
+
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+// Endpoint list click
+document.querySelectorAll('.endpoint-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.endpoint-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+// API code tabs
+document.querySelectorAll('.api-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const parent = tab.closest('.api-code-tabs');
+    parent.querySelectorAll('.api-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// Fake terminal animation
+(function() {
+  const lines = document.querySelectorAll('#fake-output .line');
+  let delay = 0;
+  lines.forEach((line, i) => {
+    setTimeout(() => line.classList.add('show'), delay);
+    delay += 200 + Math.random() * 100;
+  });
+})();
+</script>
+</body>
+</html>

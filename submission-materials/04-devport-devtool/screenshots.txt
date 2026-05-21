@@ -1,0 +1,11 @@
+01-hero-section.png - Hero section with developer-focused headline and documentation CTA
+02-code-showcase-section.png - Code showcase section with syntax-highlighted code examples
+03-features-grid-section.png - Features grid presenting technical capabilities
+04-languages-section.png - Supported languages and frameworks display
+05-metrics-section.png - Platform metrics showing downloads, stars, and performance data
+06-pricing-section.png - Pricing table with developer-friendly tiers
+07-api-reference-section.png - API reference preview section
+08-testimonials-section.png - Developer testimonials with technical community quotes
+09-status-page-section.png - Status page showing platform reliability indicators
+10-faq-section.png - Technical FAQ section
+11-cta-section.png - Final CTA with documentation and trial links
